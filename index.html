@@ -2,9 +2,94 @@
 <html>
 <head>
 <title>NN Pharma</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+body{
+  margin:0;
+  font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+  background: linear-gradient(135deg,#0f2027,#203a43,#2c5364);
+  color:white;
+  text-align:center;
+}
+
+header{
+  padding:20px;
+}
+
+.search-box{
+  width:80%;
+  max-width:400px;
+  padding:12px;
+  border-radius:30px;
+  border:none;
+  outline:none;
+  background:rgba(255,255,255,0.2);
+  backdrop-filter:blur(10px);
+  color:white;
+}
+
+.container{
+  display:flex;
+  flex-wrap:wrap;
+  justify-content:center;
+  gap:20px;
+  padding:20px;
+}
+
+.card{
+  width:260px;
+  padding:20px;
+  border-radius:20px;
+  background:rgba(255,255,255,0.1);
+  backdrop-filter:blur(20px);
+  box-shadow:0 8px 32px rgba(0,0,0,0.3);
+  transition:0.4s;
+}
+
+.card:hover{
+  transform:translateY(-10px) scale(1.03);
+}
+
+.card img{
+  width:100%;
+  border-radius:15px;
+}
+
+.buttons{
+  margin-top:30px;
+  display:flex;
+  justify-content:center;
+  gap:15px;
+  flex-wrap:wrap;
+}
+
+.btn{
+  padding:12px 20px;
+  border-radius:30px;
+  text-decoration:none;
+  color:white;
+  background:rgba(255,255,255,0.2);
+  backdrop-filter:blur(10px);
+  transition:0.3s;
+}
+
+.btn:hover{
+  background:rgba(255,255,255,0.4);
+}
+
+.back-btn{
+  position:fixed;
+  top:20px;
+  left:20px;
+  background:rgba(255,255,255,0.2);
+  padding:10px 15px;
+  border-radius:20px;
+  cursor:pointer;
+}
+</style>
 
 <script type="module">
-
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-app.js";
 import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-database.js";
 
@@ -21,12 +106,17 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 
+let allProducts = [];
+
 window.onload = () => {
   const container = document.getElementById("products");
+  const searchInput = document.getElementById("search");
+
   const productsRef = ref(db, "products");
 
   onValue(productsRef, (snapshot) => {
     container.innerHTML = "";
+    allProducts = [];
 
     if (!snapshot.exists()) {
       container.innerHTML = "No Products Found";
@@ -36,27 +126,55 @@ window.onload = () => {
     const data = snapshot.val();
 
     for (let key in data) {
-      const product = data[key];
-
-      container.innerHTML += `
-        <div style="background:#111;padding:20px;margin:20px;border-radius:10px;">
-          <img src="${product.image}" width="200"><br><br>
-          <h3>${product.name}</h3>
-          <p>${product.category}</p>
-          <p>${product.description}</p>
-        </div>
-      `;
+      allProducts.push(data[key]);
     }
+
+    displayProducts(allProducts);
+  });
+
+  searchInput.addEventListener("input", () => {
+    const value = searchInput.value.toLowerCase();
+    const filtered = allProducts.filter(p =>
+      p.name.toLowerCase().includes(value)
+    );
+    displayProducts(filtered);
   });
 };
 
+function displayProducts(products){
+  const container = document.getElementById("products");
+  container.innerHTML = "";
+
+  products.forEach(product => {
+    container.innerHTML += `
+      <div class="card">
+        <img src="${product.image}">
+        <h3>${product.name}</h3>
+        <p>${product.category}</p>
+        <p>${product.description}</p>
+      </div>
+    `;
+  });
+}
 </script>
 </head>
 
-<body style="background:black;color:white;text-align:center;font-family:Arial">
+<body>
 
-<h1>NN Pharma Product Collection</h1>
-<div id="products"></div>
+<div class="back-btn" onclick="history.back()">⬅ Back</div>
+
+<header>
+<h1>NN Pharma</h1>
+<input type="text" id="search" class="search-box" placeholder="Search product...">
+</header>
+
+<div class="container" id="products"></div>
+
+<div class="buttons">
+  <a class="btn" href="tel:9044568592">📞 Call</a>
+  <a class="btn" href="mailto:soulhealthcare97@gmail.com">📧 Email</a>
+  <a class="btn" href="https://wa.me/919044568592" target="_blank">🟢 WhatsApp</a>
+</div>
 
 </body>
 </html>
