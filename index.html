@@ -1,69 +1,12 @@
-<!DOCTYPE html>
-<html>
 <head>
-<title>NN Pharma</title>
+  <title>NN Pharma</title>
 
-<script type="module">
+  <script type="module">
 
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+  import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-const firebaseConfig = {
-  apiKey: "AIzaSyAJ9i4_b33p2QicCF5DHXcfKwhahpp3B_w",
-  authDomain: "nn-pharma.firebaseapp.com",
-  projectId: "nn-pharma",
-  storageBucket: "nn-pharma.firebasestorage.app",
-  messagingSenderId: "1044480571179",
-  appId: "1:1044480571179:web:48e105c658e0cd6133b76e"
-};
+  // same firebaseConfig yaha bhi
 
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
-
-async function loadProducts() {
-  const querySnapshot = await getDocs(collection(db, "products"));
-  const container = document.getElementById("products");
-
-  querySnapshot.forEach((doc) => {
-    const data = doc.data();
-    container.innerHTML += `
-      <div class="card">
-        <img src="${data.image}" width="200">
-        <h3>${data.name}</h3>
-        <p>${data.category}</p>
-        <p>${data.description}</p>
-      </div>
-    `;
-  });
-}
-
-window.onload = loadProducts;
-
-</script>
-
-<style>
-body {
-  background: #000;
-  color: white;
-  font-family: Arial;
-  text-align: center;
-}
-.card {
-  background: rgba(255,255,255,0.1);
-  padding: 20px;
-  margin: 20px;
-  border-radius: 15px;
-}
-img {
-  border-radius: 10px;
-}
-</style>
+  </script>
 </head>
-
-<body>
-
-<h1>NN Pharma Product Collection</h1>
-<div id="products"></div>
-
-</body>
-</html>
