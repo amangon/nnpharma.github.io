@@ -8,19 +8,20 @@
     import { getDatabase, ref, push } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-database.js";
 
     const firebaseConfig = {
-      apiKey: "AIzaSyAJ9i4_b33p2QicCF5DHXcfKwhahpp3B_w",
-      authDomain: "nn-pharma.firebaseapp.com",
-      databaseURL: "https://nn-pharma-default-rtdb.firebaseio.com",
-      projectId: "nn-pharma",
-      storageBucket: "nn-pharma.firebasestorage.app",
-      messagingSenderId: "1044480571179",
-      appId: "1:1044480571179:web:48e105c658e0cd6133b76e"
+      apiKey: "YOUR_NEW_PROJECT_API_KEY",
+      authDomain: "nnpharma-new.firebaseapp.com",
+      databaseURL: "https://nnpharma-new-default-rtdb.firebaseio.com",
+      projectId: "nnpharma-new",
+      storageBucket: "nnpharma-new.appspot.com",
+      messagingSenderId: "YOUR_NEW_PROJECT_SENDER_ID",
+      appId: "YOUR_NEW_PROJECT_APP_ID"
     };
 
     const app = initializeApp(firebaseConfig);
     const db = getDatabase(app);
 
     window.addEventListener("DOMContentLoaded", () => {
+
       document.getElementById("addBtn").addEventListener("click", async () => {
 
         const name = document.getElementById("name").value;
@@ -47,6 +48,7 @@
         document.getElementById("image").value = "";
         document.getElementById("description").value = "";
       });
+
     });
   </script>
 </head>
