@@ -1,6 +1,16 @@
 <!DOCTYPE html>
 <html>
-<head>
+<head<script>
+const correctPassword = "nn@123";   // Yahan apna password likho
+
+const enteredPassword = prompt("Enter Admin Password:");
+
+if (enteredPassword !== correctPassword) {
+  alert("Access Denied!");
+  window.location.href = "/";
+}
+</script>
+>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Admin - NN Pharma</title>
 
