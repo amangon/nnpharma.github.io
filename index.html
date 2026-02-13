@@ -1,64 +1,63 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>NN Pharma</title>
+<title>NN Pharma</title>
 
-  <script type="module">
+<script type="module">
 
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-app.js";
-    import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-firestore.js";
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-app.js";
+import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-database.js";
 
-    const firebaseConfig = {
-      apiKey: "AIzaSyAJ9i4_b33p2QicCF5DHXcfKwhahpp3B_w",
-      authDomain: "nn-pharma.firebaseapp.com",
-      projectId: "nn-pharma",
-      storageBucket: "nn-pharma.firebasestorage.app",
-      messagingSenderId: "1044480571179",
-      appId: "1:1044480571179:web:48e105c658e0cd6133b76e"
-    };
+const firebaseConfig = {
+  apiKey: "AIzaSyAJ9i4_b33p2QicCF5DHXcfKwhahpp3B_w",
+  authDomain: "nn-pharma.firebaseapp.com",
+  databaseURL: "https://nn-pharma-default-rtdb.firebaseio.com",
+  projectId: "nn-pharma",
+  storageBucket: "nn-pharma.firebasestorage.app",
+  messagingSenderId: "1044480571179",
+  appId: "1:1044480571179:web:48e105c658e0cd6133b76e"
+};
 
-    const app = initializeApp(firebaseConfig);
-    const db = getFirestore(app);
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
 
-    async function loadProducts() {
-      const container = document.getElementById("products");
-      container.innerHTML = "Loading...";
+const productsRef = ref(db, "products");
 
-      try {
-        const querySnapshot = await getDocs(collection(db, "products"));
-        container.innerHTML = "";
+window.onload = () => {
+  const container = document.getElementById("products");
 
-        if (querySnapshot.size === 0) {
-          container.innerHTML = "No Products Found";
-          return;
-        }
+  onValue(productsRef, (snapshot) => {
+    container.innerHTML = "";
 
-        querySnapshot.forEach((doc) => {
-          const data = doc.data();
-
-          container.innerHTML += `
-            <div style="background:#111;padding:20px;margin:20px;border-radius:10px;">
-              <img src="${data.image}" width="200"><br><br>
-              <h3>${data.name}</h3>
-              <p>${data.category}</p>
-              <p>${data.description}</p>
-            </div>
-          `;
-        });
-
-      } catch (error) {
-        console.error(error);
-        container.innerHTML = "Error loading products";
-      }
+    if (!snapshot.exists()) {
+      container.innerHTML = "No Products Found";
+      return;
     }
 
-    window.onload = loadProducts;
+    const data = snapshot.val();
 
-  </script>
+    for (let key in data) {
+      const product = data[key];
+
+      container.innerHTML += `
+        <div style="background:#111;padding:20px;margin:20px;border-radius:10px;">
+          <img src="${product.image}" width="200"><br><br>
+          <h3>${product.name}</h3>
+          <p>${product.category}</p>
+          <p>${product.description}</p>
+        </div>
+      `;
+    }
+  });
+};
+
+</script>
 </head>
 
 <body style="background:black;color:white;text-align:center;font-family:Arial">
-  <h1>NN Pharma Product Collection</h1>
-  <div id="products"></div>
+
+<h1>NN Pharma Product Collection</h1>
+<div id="products"></div>
+
 </body>
 </html>
