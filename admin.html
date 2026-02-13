@@ -21,7 +21,6 @@
     const db = getDatabase(app);
 
     window.addEventListener("DOMContentLoaded", () => {
-
       document.getElementById("addBtn").addEventListener("click", async () => {
 
         const name = document.getElementById("name").value;
@@ -41,14 +40,13 @@
           description
         });
 
-        alert("Product Added ✅");
+        alert("Product Added Successfully ✅");
 
         document.getElementById("name").value = "";
         document.getElementById("category").value = "";
         document.getElementById("image").value = "";
         document.getElementById("description").value = "";
       });
-
     });
   </script>
 </head>
