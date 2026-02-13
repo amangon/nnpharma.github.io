@@ -83,21 +83,47 @@ section{
 }
 
 /* Product Cards */
-.products{
+.product-container{
   display:flex;
-  gap:25px;
-  flex-wrap:wrap;
+  gap:50px;
+  align-items:center;
   justify-content:center;
-  margin-top:30px;
+  flex-wrap:wrap;
 }
 
-.product{
-  padding:25px 35px;
-  border-radius:18px;
-  background:rgba(255,255,255,0.12);
-  backdrop-filter: blur(12px);
-  transition:0.4s ease;
-  cursor:pointer;
+.product-image img{
+  width:300px;
+  border-radius:25px;
+  box-shadow:0 25px 50px rgba(0,0,0,0.5);
+  transition:0.6s ease;
+  animation: float 4s ease-in-out infinite;
+}
+
+.product-image img:hover{
+  transform: rotateY(15deg) rotateX(8deg) scale(1.1);
+}
+
+@keyframes float{
+  0%{ transform: translateY(0px); }
+  50%{ transform: translateY(-15px); }
+  100%{ transform: translateY(0px); }
+}
+
+.product-info{
+  max-width:500px;
+  text-align:left;
+}
+
+.product-info h3{
+  font-size:32px;
+  margin-bottom:20px;
+}
+
+.product-info p{
+  margin-bottom:15px;
+  line-height:1.6;
+}
+
 }
 
 .product:hover{
@@ -176,12 +202,31 @@ footer{
 <section>
   <div class="glass card hidden">
     <h2>Our Product Categories</h2>
-    <div class="products">
-      <div class="product">Tablets</div>
-      <div class="product">Syrups</div>
-      <div class="product">Capsules</div>
-      <div class="product">Injections</div>
-    </div>
+ <div class="product-container">
+
+  <div class="product-image">
+    <img src="product1.jpeg" alt="Axcept-SP Tablet">
+  </div>
+
+  <div class="product-info">
+    <h3>Axcept-SP Tablets</h3>
+
+    <p><strong>Composition:</strong><br>
+    Aceclofenac 100mg + Paracetamol 325mg + Serratiopeptidase 15mg</p>
+
+    <p><strong>Indication:</strong><br>
+    Post-operative pain, Dental pain, Trauma, Swelling & Inflammation</p>
+
+    <p><strong>Benefits:</strong><br>
+    ✔ Reduces Pain<br>
+    ✔ Controls Inflammation<br>
+    ✔ Faster Recovery</p>
+
+    <p><strong>Pack:</strong> 10 x 10 Tablets</p>
+  </div>
+
+</div>
+
   </div>
 </section>
 
