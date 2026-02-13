@@ -7,13 +7,14 @@
 
 <style>
 *{margin:0;padding:0;box-sizing:border-box;}
+
 body{
   font-family:-apple-system,BlinkMacSystemFont,sans-serif;
   color:white;
   overflow-x:hidden;
 }
 
-/* Animated Background */
+/* Animated Gradient Background */
 body::before{
   content:"";
   position:fixed;
@@ -24,17 +25,26 @@ body::before{
   animation:gradient 15s ease infinite;
   z-index:-2;
 }
+
 @keyframes gradient{
   0%{background-position:0% 50%;}
   50%{background-position:100% 50%;}
   100%{background-position:0% 50%;}
 }
 
-/* Layout */
-header{text-align:center;padding:80px 20px;}
-header h1{font-size:42px;}
+header{
+  text-align:center;
+  padding:80px 20px;
+}
 
-section{padding:40px 20px;display:flex;justify-content:center;}
+header h1{font-size:42px;}
+header p{opacity:0.9;margin-top:10px;}
+
+section{
+  padding:40px 20px;
+  display:flex;
+  justify-content:center;
+}
 
 .glass{
   background:rgba(255,255,255,0.08);
@@ -62,7 +72,7 @@ section{padding:40px 20px;display:flex;justify-content:center;}
   margin-bottom:40px;
 }
 
-/* Grid */
+/* Product Grid */
 .product-grid{
   display:grid;
   grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
@@ -122,8 +132,22 @@ section{padding:40px 20px;display:flex;justify-content:center;}
 .close{
   text-align:right;
   cursor:pointer;
-  font-size:20px;
+  font-size:22px;
 }
+
+/* Buttons */
+.btn{
+  padding:10px 20px;
+  border-radius:30px;
+  border:none;
+  margin:5px;
+  cursor:pointer;
+  font-weight:600;
+}
+
+.call{background:#28a745;color:white;}
+.email{background:white;color:#111;}
+.whatsapp{background:#25D366;color:white;}
 </style>
 </head>
 
@@ -158,19 +182,15 @@ section{padding:40px 20px;display:flex;justify-content:center;}
 <div class="popup" id="popup" onclick="closeOutside(event)">
   <div class="popup-content">
 
-    <!-- Close Button -->
-    <div onclick="closePopup()" 
-         style="text-align:right; font-size:22px; cursor:pointer;">✖</div>
+    <div class="close" onclick="closePopup()">✖</div>
 
-    <!-- Product Image -->
-    <div style="text-align:center; margin-bottom:20px;">
-      <img src="product1.jpeg" 
-           style="width:240px;
-                  border-radius:20px;
-                  box-shadow:0 15px 35px rgba(0,0,0,0.5);">
+    <div style="text-align:center;margin-bottom:20px;">
+      <img src="product1.jpeg"
+           style="width:240px;border-radius:20px;
+           box-shadow:0 15px 35px rgba(0,0,0,0.5);">
     </div>
 
-    <h2 style="margin-bottom:10px;">Axcept-SP Tablets</h2>
+    <h2>Axcept-SP Tablets</h2>
 
     <p><strong>Composition:</strong><br>
     Aceclofenac 100 mg + Paracetamol 325 mg + Serratiopeptidase 15 mg</p>
@@ -186,100 +206,21 @@ section{padding:40px 20px;display:flex;justify-content:center;}
     <p><strong>Dosage:</strong><br>
     As directed by physician.</p>
 
-    <!-- Contact Buttons -->
-    <div style="margin-top:25px; text-align:center;">
+    <div style="margin-top:20px;text-align:center;">
 
       <a href="tel:+919044568592">
-        <button style="padding:10px 20px;
-                       border-radius:30px;
-                       border:none;
-                       margin:5px;
-                       background:#28a745;
-                       color:white;
-                       cursor:pointer;">
-          📞 Call
-        </button>
+        <button class="btn call">📞 Call</button>
       </a>
 
       <a href="mailto:soulhealthcare97@gmail.com">
-        <button style="padding:10px 20px;
-                       border-radius:30px;
-                       border:none;
-                       margin:5px;
-                       background:#ffffff;
-                       color:#111;
-                       cursor:pointer;">
-          📧 Email
-        </button>
+        <button class="btn email">📧 Email</button>
       </a>
 
       <a href="https://wa.me/919044568592" target="_blank">
-        <button style="padding:10px 20px;
-                       border-radius:30px;
-                       border:none;
-                       margin:5px;
-                       background:#25D366;
-                       color:white;
-                       cursor:pointer;">
-          💬 WhatsApp
-        </button>
+        <button class="btn whatsapp">💬 WhatsApp</button>
       </a>
 
     </div>
-
-  </div>
-</div>
-
-
-    <h2 style="margin-bottom:15px;">Axcept-SP Tablets</h2>
-
-    <p><strong>Composition:</strong><br>
-    Aceclofenac 100 mg + Paracetamol 325 mg + Serratiopeptidase 15 mg</p>
-
-    <p><strong>Indications:</strong><br>
-    Post-operative pain, dental pain, joint pain, trauma & inflammation.</p>
-
-    <p><strong>How It Works:</strong><br>
-    Aceclofenac reduces inflammation, Paracetamol controls pain and fever,
-    while Serratiopeptidase reduces swelling and speeds recovery.</p>
-
-    <p><strong>Advantages:</strong><br>
-    ✔ Fast pain relief<br>
-    ✔ Effective inflammation control<br>
-    ✔ Suitable for post-surgical conditions</p>
-
-    <p><strong>Dosage:</strong><br>
-    As directed by physician.</p>
-
-    <p><strong>Possible Side Effects:</strong><br>
-    Mild gastric discomfort or nausea in sensitive patients.</p>
-
-  </div>
-</div>
-
-    <div class="close" onclick="closePopup()">✖</div>
-
-    <h2>Axcept-SP Tablets</h2>
-
-    <p><strong>Composition:</strong><br>
-    Aceclofenac 100 mg + Paracetamol 325 mg + Serratiopeptidase 15 mg</p>
-
-    <p><strong>Indications:</strong><br>
-    Post-operative pain, dental pain, joint pain, trauma and inflammation.</p>
-
-    <p><strong>How It Works:</strong><br>
-    Aceclofenac reduces inflammation, Paracetamol controls pain and fever, while Serratiopeptidase reduces swelling and supports recovery.</p>
-
-    <p><strong>Advantages:</strong><br>
-    ✔ Fast pain relief<br>
-    ✔ Effective inflammation control<br>
-    ✔ Suitable for post-surgical cases</p>
-
-    <p><strong>Dosage:</strong><br>
-    As directed by physician.</p>
-
-    <p><strong>Possible Side Effects:</strong><br>
-    Mild gastric discomfort, nausea or acidity in sensitive patients.</p>
 
   </div>
 </div>
@@ -288,8 +229,15 @@ section{padding:40px 20px;display:flex;justify-content:center;}
 function openPopup(){
   document.getElementById("popup").style.display="flex";
 }
+
 function closePopup(){
   document.getElementById("popup").style.display="none";
+}
+
+function closeOutside(event){
+  if(event.target.id==="popup"){
+    closePopup();
+  }
 }
 
 /* Search */
