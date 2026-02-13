@@ -5,101 +5,93 @@
 <title>NN Pharma</title>
 
 <style>
-:root{
-  --bg: linear-gradient(135deg,#0f2027,#203a43,#2c5364);
-  --card: rgba(255,255,255,0.1);
-  --text: white;
-}
 
-.light{
-  --bg: #f4f4f4;
-  --card: rgba(0,0,0,0.05);
-  --text: #111;
-}
-
+/* ===== Animated Apple Gradient Background ===== */
 body{
   margin:0;
   font-family:-apple-system,BlinkMacSystemFont,sans-serif;
-  background:var(--bg);
-  color:var(--text);
-  transition:0.4s;
-  animation:fadeIn 1s ease;
+  color:white;
+  overflow-x:hidden;
+  background: linear-gradient(-45deg,#0f2027,#203a43,#2c5364,#1c92d2);
+  background-size: 400% 400%;
+  animation: gradientMove 12s ease infinite;
 }
 
-@keyframes fadeIn{
-  from{opacity:0; transform:translateY(20px);}
-  to{opacity:1; transform:translateY(0);}
+@keyframes gradientMove{
+  0%{background-position:0% 50%;}
+  50%{background-position:100% 50%;}
+  100%{background-position:0% 50%;}
 }
 
 /* Navbar */
 nav{
   display:flex;
   justify-content:space-between;
-  padding:15px 30px;
-  backdrop-filter:blur(15px);
+  padding:18px 40px;
+  backdrop-filter:blur(20px);
   background:rgba(255,255,255,0.1);
   position:sticky;
   top:0;
-}
-
-nav h2{
-  margin:0;
-}
-
-.toggle{
-  cursor:pointer;
+  z-index:100;
 }
 
 /* Search */
-.search-box{
+.search{
   display:block;
-  margin:20px auto;
-  width:80%;
-  max-width:400px;
-  padding:12px;
+  margin:30px auto;
+  width:85%;
+  max-width:450px;
+  padding:14px 20px;
   border-radius:30px;
   border:none;
   outline:none;
-  background:var(--card);
-  backdrop-filter:blur(10px);
-  color:var(--text);
+  background:rgba(255,255,255,0.2);
+  backdrop-filter:blur(15px);
+  color:white;
+  font-size:15px;
 }
 
-/* Cards */
+/* Grid */
 .container{
   display:flex;
   flex-wrap:wrap;
   justify-content:center;
-  gap:20px;
+  gap:30px;
   padding:20px;
 }
 
 .card{
-  width:250px;
+  width:260px;
+  border-radius:25px;
+  background:rgba(255,255,255,0.1);
+  backdrop-filter:blur(25px);
   padding:15px;
-  border-radius:20px;
-  background:var(--card);
-  backdrop-filter:blur(20px);
-  transition:0.3s;
   cursor:pointer;
+  transition:0.4s;
 }
 
 .card:hover{
-  transform:translateY(-8px) scale(1.03);
+  transform:translateY(-12px) scale(1.05);
 }
 
+/* ===== Product Image Zoom Effect ===== */
 .card img{
   width:100%;
-  border-radius:15px;
+  border-radius:20px;
+  transition:0.4s;
+}
+
+.card:hover img{
+  transform:scale(1.1);
 }
 
 /* Modal */
 .modal{
   position:fixed;
   top:0; left:0;
-  width:100%;
-  height:100%;
+  width:100%; height:100%;
   background:rgba(0,0,0,0.7);
+  backdrop-filter:blur(10px);
   display:none;
   justify-content:center;
   align-items:center;
@@ -108,30 +100,52 @@ nav h2{
 .modal-content{
   background:white;
   color:black;
-  padding:30px;
-  border-radius:20px;
   width:90%;
-  max-width:500px;
+  max-width:600px;
+  padding:30px;
+  border-radius:30px;
+  position:relative;
+  animation:zoom 0.3s ease;
 }
 
+@keyframes zoom{
+  from{transform:scale(0.8);}
+  to{transform:scale(1);}
+}
+
+/* ===== Zoom Effect Inside Modal ===== */
 .modal img{
   width:100%;
-  border-radius:15px;
+  border-radius:20px;
+  transition:0.4s;
+}
+
+.modal img:hover{
+  transform:scale(1.2);
+}
+
+.close{
+  position:absolute;
+  top:15px;
+  right:20px;
+  font-size:26px;
+  cursor:pointer;
+  color:black;
 }
 
 /* Contact Buttons */
-.buttons{
+.contact{
   text-align:center;
-  margin:30px;
+  margin:40px;
 }
 
 .btn{
-  padding:10px 20px;
+  padding:12px 25px;
   border-radius:30px;
-  text-decoration:none;
   margin:5px;
-  background:var(--card);
-  color:var(--text);
+  text-decoration:none;
+  color:white;
+  background:rgba(255,255,255,0.2);
   backdrop-filter:blur(10px);
 }
 
@@ -142,11 +156,18 @@ nav h2{
   right:20px;
   background:#25D366;
   color:white;
-  padding:15px;
+  padding:18px;
   border-radius:50%;
   font-size:22px;
   text-decoration:none;
+  box-shadow:0 5px 15px rgba(0,0,0,0.3);
+  transition:0.3s;
 }
+
+.whatsapp:hover{
+  transform:scale(1.1);
+}
+
 </style>
 
 <script type="module">
@@ -166,15 +187,14 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 
-let allProducts = [];
+let allProducts=[];
 
-window.onload = () => {
-  const container = document.getElementById("products");
-  const search = document.getElementById("search");
+window.onload=()=>{
+  const container=document.getElementById("products");
+  const search=document.getElementById("search");
+  const productsRef=ref(db,"products");
 
-  const productsRef = ref(db, "products");
-
-  onValue(productsRef, (snapshot)=>{
+  onValue(productsRef,(snapshot)=>{
     container.innerHTML="";
     allProducts=[];
     if(!snapshot.exists()){
@@ -200,7 +220,7 @@ function display(products){
   container.innerHTML="";
   products.forEach(product=>{
     container.innerHTML+=`
-      <div class="card" onclick='openModal(${JSON.stringify(product)})'>
+      <div class="card" onclick='openProduct(${JSON.stringify(product)})'>
         <img src="${product.image}">
         <h3>${product.name}</h3>
         <p>${product.category}</p>
@@ -209,9 +229,10 @@ function display(products){
   });
 }
 
-window.openModal=function(product){
+window.openProduct=function(product){
   document.getElementById("modal").style.display="flex";
-  document.getElementById("modal-body").innerHTML=`
+  document.getElementById("modalBody").innerHTML=`
+    <span class="close" onclick="closeModal()">✕</span>
     <img src="${product.image}">
     <h2>${product.name}</h2>
     <p><b>Category:</b> ${product.category}</p>
@@ -222,10 +243,6 @@ window.openModal=function(product){
 window.closeModal=function(){
   document.getElementById("modal").style.display="none";
 }
-
-window.toggleMode=function(){
-  document.body.classList.toggle("light");
-}
 </script>
 </head>
 
@@ -233,28 +250,21 @@ window.toggleMode=function(){
 
 <nav>
   <h2>NN Pharma</h2>
-  <div>
-    <span class="toggle" onclick="toggleMode()">🌙 / ☀</span>
-  </div>
 </nav>
 
-<input type="text" id="search" class="search-box" placeholder="Search products...">
+<input type="text" id="search" class="search" placeholder="Search products...">
 
 <div class="container" id="products"></div>
 
-<div class="buttons">
+<div class="contact">
   <a class="btn" href="tel:9044568592">📞 Call</a>
   <a class="btn" href="mailto:soulhealthcare97@gmail.com">📧 Email</a>
 </div>
 
 <a href="https://wa.me/919044568592" class="whatsapp" target="_blank">🟢</a>
 
-<!-- Modal -->
-<div class="modal" id="modal" onclick="closeModal()">
-  <div class="modal-content" onclick="event.stopPropagation()">
-    <div id="modal-body"></div>
-    <button onclick="closeModal()">Close</button>
-  </div>
+<div class="modal" id="modal">
+  <div class="modal-content" id="modalBody"></div>
 </div>
 
 </body>
