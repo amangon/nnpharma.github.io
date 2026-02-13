@@ -3,74 +3,104 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="description" content="Trusted pharmaceutical distributor supplying quality medicines to medical stores and healthcare professionals.">
-<title>Pharma Distribution Company</title>
+
+<title>NN Pharma Distribution</title>
 
 <style>
 body{
     margin:0;
-    font-family: Arial, sans-serif;
-    background:#f4f8fb;
-    color:#333;
-}
-header{
-    background:#0A4D8C;
+    font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+    background: linear-gradient(135deg,#0f2027,#203a43,#2c5364);
     color:white;
-    text-align:center;
-    padding:60px 20px;
 }
+
+/* Glass Effect */
+.glass{
+    background: rgba(255,255,255,0.1);
+    backdrop-filter: blur(15px);
+    -webkit-backdrop-filter: blur(15px);
+    border-radius:20px;
+    border:1px solid rgba(255,255,255,0.2);
+    box-shadow:0 8px 32px rgba(0,0,0,0.3);
+}
+
+/* Header */
+header{
+    text-align:center;
+    padding:100px 20px;
+}
+
 header h1{
-    margin:0;
-    font-size:40px;
+    font-size:48px;
+    margin-bottom:15px;
 }
+
 header p{
-    margin-top:10px;
     font-size:18px;
+    opacity:0.9;
 }
-button{
-    margin-top:20px;
-    padding:12px 25px;
-    border:none;
-    background:white;
-    color:#0A4D8C;
-    font-weight:bold;
-    cursor:pointer;
-    border-radius:5px;
-    transition:0.3s;
-}
-button:hover{
-    background:#d9e6f5;
-}
+
+/* Section */
 section{
-    padding:50px 20px;
-    text-align:center;
+    padding:60px 20px;
+    display:flex;
+    justify-content:center;
 }
-.cards{
+
+/* Card */
+.card{
+    width:90%;
+    max-width:1000px;
+    padding:40px;
+}
+
+/* Buttons */
+.buttons{
     display:flex;
     justify-content:center;
     gap:20px;
     flex-wrap:wrap;
+    margin-top:30px;
 }
-.card{
-    background:white;
-    padding:20px;
-    width:200px;
-    border-radius:10px;
-    box-shadow:0 5px 15px rgba(0,0,0,0.1);
-    transition:0.3s;
+
+.btn{
+    padding:15px 30px;
+    border-radius:50px;
+    border:none;
+    cursor:pointer;
+    font-size:16px;
+    font-weight:bold;
+    transition:0.3s ease;
 }
-.card:hover{
-    transform:translateY(-5px);
+
+.email{background:white;color:#0f2027;}
+.call{background:#28a745;color:white;}
+.whatsapp{background:#25D366;color:white;}
+
+.btn:hover{
+    transform:scale(1.1);
+    box-shadow:0 10px 25px rgba(0,0,0,0.5);
 }
+
+/* Product Cards */
+.products{
+    display:flex;
+    gap:20px;
+    flex-wrap:wrap;
+    justify-content:center;
+}
+
+.product{
+    padding:20px 30px;
+    border-radius:15px;
+    background:rgba(255,255,255,0.15);
+    backdrop-filter: blur(10px);
+}
+
 footer{
-    background:#0A4D8C;
-    color:white;
     text-align:center;
-    padding:20px;
-}
-a{
-    color:white;
-    text-decoration:none;
+    padding:30px;
+    opacity:0.7;
 }
 </style>
 </head>
@@ -78,80 +108,47 @@ a{
 <body>
 
 <header>
-<h1>Your Pharma Distribution</h1>
-<p>Trusted Partner for Medical Stores & Healthcare Professionals</p>
-<button onclick="document.getElementById('contact').scrollIntoView({behavior:'smooth'})">
-Contact Us
-</button>
+    <h1>NN Pharma Distribution</h1>
+    <p>Trusted Pharmaceutical Distributor for Medical Stores & Healthcare Professionals</p>
 </header>
 
 <section>
-<h2>About Us</h2>
-<p>We are a reliable pharmaceutical distributor supplying tablets, syrups, capsules, and injections to medical stores and doctors with professional support and timely delivery.</p>
+    <div class="glass card">
+        <h2 style="text-align:center;">Our Product Categories</h2>
+        <div class="products">
+            <div class="product">Tablets</div>
+            <div class="product">Syrups</div>
+            <div class="product">Capsules</div>
+            <div class="product">Injections</div>
+        </div>
+    </div>
 </section>
 
 <section>
-<h2>Our Product Categories</h2>
-<div class="cards">
-<div class="card">Tablets</div>
-<div class="card">Syrups</div>
-<div class="card">Capsules</div>
-<div class="card">Injections</div>
-</div>
+    <div class="glass card" style="text-align:center;">
+        <h2>Contact Us</h2>
+
+        <div class="buttons">
+
+            <a href="mailto:soulhealthcare97@gmail.com">
+                <button class="btn email">📧 Email Us</button>
+            </a>
+
+            <a href="tel:+919044568592">
+                <button class="btn call">📞 Call Now</button>
+            </a>
+
+            <a href="https://wa.me/919044568592" target="_blank">
+                <button class="btn whatsapp">💬 WhatsApp</button>
+            </a>
+
+        </div>
+    </div>
 </section>
-
-<section id="contact" style="text-align:center; padding:60px 20px; background:#f4f8fb;">
-  <h2 style="margin-bottom:30px;">Contact Us</h2>
-
-  <a href="mailto:soulhealthcare97@gmail.com" style="text-decoration:none;">
-    <button style="
-      padding:14px 28px;
-      margin:10px;
-      background:#0A4D8C;
-      color:white;
-      border:none;
-      border-radius:8px;
-      font-size:16px;
-      cursor:pointer;">
-      📧 Email Us
-    </button>
-  </a>
-
-  <a href="tel:+919044568592" style="text-decoration:none;">
-    <button style="
-      padding:14px 28px;
-      margin:10px;
-      background:#28a745;
-      color:white;
-      border:none;
-      border-radius:8px;
-      font-size:16px;
-      cursor:pointer;">
-      📞 Call Now
-    </button>
-  </a>
-
-  <a href="https://wa.me/919044568592" target="_blank" style="text-decoration:none;">
-    <button style="
-      padding:14px 28px;
-      margin:10px;
-      background:#25D366;
-      color:white;
-      border:none;
-      border-radius:8px;
-      font-size:16px;
-      cursor:pointer;">
-      💬 WhatsApp
-    </button>
-  </a>
-
-</section>
-
 
 <footer>
-<p>© 2026 Pharma Distribution Company</p>
+© 2026 NN Pharma Distribution. All Rights Reserved.
 </footer>
 
 </body>
 </html>
-
