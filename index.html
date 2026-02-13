@@ -6,12 +6,7 @@
 <title>NN Pharma Distribution</title>
 
 <style>
-*{
-  margin:0;
-  padding:0;
-  box-sizing:border-box;
-}
-
+*{margin:0;padding:0;box-sizing:border-box;}
 body{
   font-family:-apple-system,BlinkMacSystemFont,sans-serif;
   color:white;
@@ -29,14 +24,18 @@ body::before{
   animation:gradient 15s ease infinite;
   z-index:-2;
 }
-
 @keyframes gradient{
   0%{background-position:0% 50%;}
   50%{background-position:100% 50%;}
   100%{background-position:0% 50%;}
 }
 
-/* Glass Card */
+/* Layout */
+header{text-align:center;padding:80px 20px;}
+header h1{font-size:42px;}
+
+section{padding:40px 20px;display:flex;justify-content:center;}
+
 .glass{
   background:rgba(255,255,255,0.08);
   backdrop-filter:blur(20px);
@@ -45,31 +44,10 @@ body::before{
   box-shadow:0 15px 40px rgba(0,0,0,0.4);
 }
 
-header{
-  text-align:center;
-  padding:100px 20px 60px;
-}
-
-header h1{
-  font-size:48px;
-}
-
-header p{
-  margin-top:15px;
-  opacity:0.9;
-}
-
-/* Section */
-section{
-  padding:60px 20px;
-  display:flex;
-  justify-content:center;
-}
-
 .card{
   width:95%;
-  max-width:1200px;
-  padding:50px;
+  max-width:1100px;
+  padding:40px;
   text-align:center;
 }
 
@@ -88,63 +66,63 @@ section{
 .product-grid{
   display:grid;
   grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
-  gap:30px;
+  gap:25px;
 }
 
 .product-card{
   background:rgba(255,255,255,0.1);
-  backdrop-filter:blur(15px);
   padding:20px;
   border-radius:20px;
-  text-align:center;
-  transition:0.4s ease;
   cursor:pointer;
+  transition:0.4s;
+}
+
+.product-card:hover{
+  transform:translateY(-8px) scale(1.05);
 }
 
 .product-card img{
   width:100%;
-  height:170px;
+  height:160px;
   object-fit:cover;
   border-radius:15px;
   margin-bottom:15px;
 }
 
-.product-card:hover{
-  transform:translateY(-10px) scale(1.05);
-  box-shadow:0 15px 35px rgba(0,0,0,0.5);
-}
-
-/* Buttons */
-.buttons{
-  display:flex;
-  gap:20px;
+/* Popup */
+.popup{
+  position:fixed;
+  top:0;
+  left:0;
+  width:100%;
+  height:100%;
+  background:rgba(0,0,0,0.8);
+  display:none;
   justify-content:center;
-  flex-wrap:wrap;
-  margin-top:40px;
+  align-items:center;
+  padding:20px;
 }
 
-.btn{
-  padding:15px 30px;
-  border-radius:50px;
-  border:none;
-  font-size:16px;
-  font-weight:600;
-  cursor:pointer;
-  transition:0.3s ease;
-}
-
-.email{background:#ffffff;color:#111;}
-.call{background:#28a745;color:white;}
-.whatsapp{background:#25D366;color:white;}
-
-.btn:hover{
-  transform:scale(1.1);
-}
-
-footer{
-  text-align:center;
+.popup-content{
+  background:rgba(255,255,255,0.1);
+  backdrop-filter:blur(25px);
   padding:40px;
-  opacity:0.7;
+  border-radius:25px;
+  max-width:700px;
+  width:100%;
+  color:white;
+  animation:fadeIn 0.4s ease;
+}
+
+@keyframes fadeIn{
+  from{opacity:0;transform:scale(0.9);}
+  to{opacity:1;transform:scale(1);}
+}
+
+.close{
+  text-align:right;
+  cursor:pointer;
+  font-size:20px;
 }
 </style>
 </head>
@@ -153,73 +131,73 @@ footer{
 
 <header>
   <h1>NN Pharma Distribution</h1>
-  <p>Trusted Pharmaceutical Distributor for Medical Stores & Healthcare Professionals</p>
+  <p>Trusted Pharmaceutical Distributor</p>
 </header>
 
 <section>
   <div class="glass card">
 
-    <h2 style="margin-bottom:30px;">Our Product Collection</h2>
+    <h2 style="margin-bottom:30px;">Product Collection</h2>
 
     <input type="text" id="searchInput" placeholder="Search Product...">
 
-    <div class="product-grid" id="productGrid">
+    <div class="product-grid">
 
-      <div class="product-card">
+      <div class="product-card" onclick="openPopup()">
         <img src="product1.jpeg">
         <h3>Axcept-SP</h3>
-        <p>Aceclofenac + Paracetamol + Serratiopeptidase</p>
+        <p>Pain Relief Combination</p>
       </div>
-
-      <div class="product-card">
-        <img src="product1.jpeg">
-        <h3>NN Cold Relief</h3>
-        <p>Paracetamol + Phenylephrine</p>
-      </div>
-
-      <!-- Yaha 100 products add kar sakte ho -->
 
     </div>
 
   </div>
 </section>
 
-<section>
-  <div class="glass card">
-    <h2>Contact Us</h2>
+<!-- POPUP -->
+<div class="popup" id="popup">
+  <div class="popup-content">
+    <div class="close" onclick="closePopup()">✖</div>
 
-    <div class="buttons">
+    <h2>Axcept-SP Tablets</h2>
 
-      <a href="mailto:soulhealthcare97@gmail.com">
-        <button class="btn email">📧 Email</button>
-      </a>
+    <p><strong>Composition:</strong><br>
+    Aceclofenac 100 mg + Paracetamol 325 mg + Serratiopeptidase 15 mg</p>
 
-      <a href="tel:+919044568592">
-        <button class="btn call">📞 Call</button>
-      </a>
+    <p><strong>Indications:</strong><br>
+    Post-operative pain, dental pain, joint pain, trauma and inflammation.</p>
 
-      <a href="https://wa.me/919044568592" target="_blank">
-        <button class="btn whatsapp">💬 WhatsApp</button>
-      </a>
+    <p><strong>How It Works:</strong><br>
+    Aceclofenac reduces inflammation, Paracetamol controls pain and fever, while Serratiopeptidase reduces swelling and supports recovery.</p>
 
-    </div>
+    <p><strong>Advantages:</strong><br>
+    ✔ Fast pain relief<br>
+    ✔ Effective inflammation control<br>
+    ✔ Suitable for post-surgical cases</p>
+
+    <p><strong>Dosage:</strong><br>
+    As directed by physician.</p>
+
+    <p><strong>Possible Side Effects:</strong><br>
+    Mild gastric discomfort, nausea or acidity in sensitive patients.</p>
 
   </div>
-</section>
-
-<footer>
-© 2026 NN Pharma Distribution
-</footer>
+</div>
 
 <script>
-const searchInput=document.getElementById("searchInput");
-const products=document.querySelectorAll(".product-card");
+function openPopup(){
+  document.getElementById("popup").style.display="flex";
+}
+function closePopup(){
+  document.getElementById("popup").style.display="none";
+}
 
-searchInput.addEventListener("keyup",function(){
+/* Search */
+document.getElementById("searchInput").addEventListener("keyup",function(){
   const value=this.value.toLowerCase();
-  products.forEach(product=>{
-    const text=product.innerText.toLowerCase();
-    product.style.display=text.includes(value)?"block":"none";
+  document.querySelectorAll(".product-card").forEach(card=>{
+    const text=card.innerText.toLowerCase();
+    card.style.display=text.includes(value)?"block":"none";
   });
 });
 </script>
