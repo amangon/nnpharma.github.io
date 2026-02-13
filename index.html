@@ -1,255 +1,232 @@
 <!DOCTYPE html>
 <html>
 <head>
+<meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>NN Pharma</title>
 
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+
 <style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:'Inter',sans-serif;
+}
+
 body{
-  margin:0;
-  font-family:-apple-system,BlinkMacSystemFont,sans-serif;
-  background:linear-gradient(-45deg,#0f2027,#203a43,#2c5364,#1c92d2);
-  background-size:400% 400%;
-  animation:gradientMove 12s ease infinite;
-  color:white;
+background:linear-gradient(135deg,#0f2027,#203a43,#2c5364);
+color:white;
+padding:40px;
 }
 
-@keyframes gradientMove{
-  0%{background-position:0% 50%;}
-  50%{background-position:100% 50%;}
-  100%{background-position:0% 50%;}
+/* GLASS CONTAINER */
+.main{
+background:rgba(255,255,255,0.08);
+backdrop-filter:blur(30px);
+border-radius:40px;
+padding:40px;
+box-shadow:0 30px 80px rgba(0,0,0,0.6);
 }
 
-/* Header */
-.header{
-  text-align:center;
-  padding:30px;
+/* HERO */
+.hero{
+position:relative;
+border-radius:30px;
+overflow:hidden;
+height:350px;
+margin-bottom:40px;
 }
 
-.header img{
-  width:140px;
-  margin-bottom:10px;
+.hero img{
+width:100%;
+height:100%;
+object-fit:cover;
+filter:brightness(0.7);
 }
 
-/* Search + Filter */
-.search-container{
-  text-align:center;
-  margin:20px;
+.hero-content{
+position:absolute;
+top:50%;
+left:50%;
+transform:translate(-50%,-50%);
+text-align:center;
+}
+
+.hero-content h1{
+font-size:40px;
+margin-bottom:15px;
+}
+
+.hero-content p{
+opacity:0.8;
+margin-bottom:20px;
 }
 
 .search{
-  padding:12px 20px;
-  border-radius:30px;
-  border:none;
-  outline:none;
-  width:70%;
-  max-width:400px;
-  background:rgba(255,255,255,0.2);
-  color:white;
+background:white;
+border-radius:40px;
+padding:12px 20px;
+display:flex;
+align-items:center;
+width:300px;
+margin:auto;
 }
 
-.filter-btn{
-  padding:10px 15px;
-  border-radius:20px;
-  border:none;
-  margin-left:10px;
-  background:rgba(255,255,255,0.2);
-  color:white;
-  cursor:pointer;
+.search input{
+border:none;
+outline:none;
+width:100%;
+font-size:15px;
 }
 
-/* Section */
+/* SECTION */
 .section{
-  padding:20px;
+margin-top:40px;
 }
 
-.section h2{
-  text-align:center;
-  margin-bottom:20px;
+.section-header{
+display:flex;
+justify-content:space-between;
+align-items:center;
+margin-bottom:20px;
 }
 
-.container{
-  display:flex;
-  flex-wrap:wrap;
-  justify-content:center;
-  gap:25px;
+.section-header h2{
+font-size:22px;
+}
+
+.section-header a{
+color:#00e5ff;
+text-decoration:none;
+}
+
+/* PRODUCT GRID */
+.grid{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
+gap:20px;
 }
 
 .card{
-  width:240px;
-  border-radius:20px;
-  padding:15px;
-  background:rgba(255,255,255,0.1);
-  backdrop-filter:blur(20px);
-  transition:0.3s;
-  cursor:pointer;
-}
-
-.card:hover{
-  transform:translateY(-8px) scale(1.05);
+background:rgba(255,255,255,0.1);
+backdrop-filter:blur(15px);
+border-radius:20px;
+padding:10px;
+transition:0.4s;
+cursor:pointer;
+overflow:hidden;
 }
 
 .card img{
-  width:100%;
-  border-radius:15px;
+width:100%;
+height:120px;
+object-fit:cover;
+border-radius:15px;
+margin-bottom:10px;
 }
 
-/* Modal */
-.modal{
-  position:fixed;
-  top:0;left:0;
-  width:100%;height:100%;
-  background:rgba(0,0,0,0.7);
-  display:none;
-  justify-content:center;
-  align-items:center;
+.card h4{
+font-size:16px;
 }
 
-.modal-content{
-  background:white;
-  color:black;
-  padding:30px;
-  border-radius:25px;
-  width:90%;
-  max-width:600px;
-  position:relative;
+.card:hover{
+transform:scale(1.05);
+box-shadow:0 15px 40px rgba(0,0,0,0.5);
 }
 
-.modal img{
-  width:100%;
-  border-radius:15px;
+/* CONTACT BUTTONS */
+.contact{
+margin-top:40px;
+text-align:center;
 }
 
-.close{
-  position:absolute;
-  top:15px;
-  right:20px;
-  font-size:25px;
-  cursor:pointer;
+.btn{
+padding:12px 25px;
+border-radius:30px;
+border:none;
+cursor:pointer;
+background:linear-gradient(45deg,#00e5ff,#2979ff);
+color:white;
+margin:10px;
+transition:0.4s;
 }
 
-/* WhatsApp */
-.whatsapp{
-  position:fixed;
-  bottom:20px;
-  right:20px;
-  background:#25D366;
-  color:white;
-  padding:15px;
-  border-radius:50%;
-  text-decoration:none;
-  font-size:22px;
+.btn:hover{
+transform:translateY(-5px);
 }
+
 </style>
-
-<script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-app.js";
-import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-database.js";
-
-const firebaseConfig = {
-  apiKey: "AIzaSyAKCKgHWREXMm76SzUptK1w2tLR-6V5J1k",
-  authDomain: "nnpharma-new.firebaseapp.com",
-  databaseURL: "https://nnpharma-new-default-rtdb.firebaseio.com",
-  projectId: "nnpharma-new",
-  storageBucket: "nnpharma-new.firebasestorage.app",
-  messagingSenderId: "509788618449",
-  appId: "1:509788618449:web:c784004cc179ac89408ff0"
-};
-
-const app = initializeApp(firebaseConfig);
-const db = getDatabase(app);
-
-let allProducts=[];
-
-window.onload=()=>{
-  const impContainer=document.getElementById("important");
-  const normalContainer=document.getElementById("normal");
-  const search=document.getElementById("search");
-
-  onValue(ref(db,"products"),(snapshot)=>{
-    impContainer.innerHTML="";
-    normalContainer.innerHTML="";
-    allProducts=[];
-    if(!snapshot.exists()) return;
-
-    const data=snapshot.val();
-    for(let key in data){
-      allProducts.push(data[key]);
-    }
-    render(allProducts);
-  });
-
-  search.addEventListener("input",()=>{
-    const value=search.value.toLowerCase();
-    const filtered=allProducts.filter(p=>p.name.toLowerCase().includes(value));
-    render(filtered);
-  });
-};
-
-function render(products){
-  const impContainer=document.getElementById("important");
-  const normalContainer=document.getElementById("normal");
-  impContainer.innerHTML="";
-  normalContainer.innerHTML="";
-
-  products.forEach(product=>{
-    const card=`
-      <div class="card" onclick='openProduct(${JSON.stringify(product)})'>
-        <img src="${product.image}">
-        <h3>${product.name}</h3>
-        <p>${product.category}</p>
-      </div>
-    `;
-
-    if(product.category.toLowerCase().includes("important")){
-      impContainer.innerHTML+=card;
-    } else{
-      normalContainer.innerHTML+=card;
-    }
-  });
-}
-
-window.openProduct=function(product){
-  document.getElementById("modal").style.display="flex";
-  document.getElementById("modalBody").innerHTML=`
-    <span class="close" onclick="closeModal()">✕</span>
-    <img src="${product.image}">
-    <h2>${product.name}</h2>
-    <p>${product.description}</p>
-  `;
-}
-
-window.closeModal=function(){
-  document.getElementById("modal").style.display="none";
-}
-</script>
 </head>
-
 <body>
 
-<div class="header">
-  <img src="logo.png">
-  <h1>NN Pharma</h1>
+<div class="main">
+
+<!-- HERO -->
+<div class="hero">
+<img src="https://images.unsplash.com/photo-1580281658629-66a7e73d4f59">
+<div class="hero-content">
+<h1>Discover Premium Medicines</h1>
+<p>Trusted pharmaceutical distribution across India</p>
+
+<div class="search">
+<input type="text" placeholder="Search medicine...">
 </div>
 
-<div class="search-container">
-  <input type="text" id="search" class="search" placeholder="Search product...">
+</div>
 </div>
 
+<!-- PRODUCTS -->
 <div class="section">
-  <h2>⭐ Important Products</h2>
-  <div class="container" id="important"></div>
+<div class="section-header">
+<h2>Trending Products</h2>
+<a href="#">See all</a>
 </div>
 
-<div class="section">
-  <h2>All Products</h2>
-  <div class="container" id="normal"></div>
+<div class="grid">
+
+<div class="card">
+<img src="product1.jpeg">
+<h4>Axcept-SP</h4>
 </div>
 
-<a href="https://wa.me/919044568592" class="whatsapp" target="_blank">🟢</a>
+<div class="card">
+<img src="https://images.unsplash.com/photo-1582719478250-c89cae4dc85b">
+<h4>NN Paracetamol</h4>
+</div>
 
-<div class="modal" id="modal">
-  <div class="modal-content" id="modalBody"></div>
+<div class="card">
+<img src="https://images.unsplash.com/photo-1588776814546-ec7b6b78d90b">
+<h4>NN Syrup</h4>
+</div>
+
+<div class="card">
+<img src="https://images.unsplash.com/photo-1580281657527-47ad45ec1e43">
+<h4>NN Capsule</h4>
+</div>
+
+<div class="card">
+<img src="https://images.unsplash.com/photo-1582719508461-905c673771fd">
+<h4>NN Injection</h4>
+</div>
+
+<div class="card">
+<img src="https://images.unsplash.com/photo-1588776814574-4b55e4e2fdb3">
+<h4>NN Antibiotic</h4>
+</div>
+
+</div>
+</div>
+
+<!-- CONTACT -->
+<div class="contact">
+<a href="tel:9044568592"><button class="btn">Call</button></a>
+<a href="mailto:soulhealthcare97@gmail.com"><button class="btn">Email</button></a>
+<a href="https://wa.me/919044568592" target="_blank"><button class="btn">WhatsApp</button></a>
+</div>
+
 </div>
 
 </body>
