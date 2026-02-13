@@ -21,10 +21,9 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 
-const productsRef = ref(db, "products");
-
 window.onload = () => {
   const container = document.getElementById("products");
+  const productsRef = ref(db, "products");
 
   onValue(productsRef, (snapshot) => {
     container.innerHTML = "";
