@@ -1,34 +1,71 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>NN Pharma</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NN Pharma</title>
 
 <style>
+:root{
+  --bg: linear-gradient(135deg,#0f2027,#203a43,#2c5364);
+  --card: rgba(255,255,255,0.1);
+  --text: white;
+}
+
+.light{
+  --bg: #f4f4f4;
+  --card: rgba(0,0,0,0.05);
+  --text: #111;
+}
+
 body{
   margin:0;
-  font-family: -apple-system, BlinkMacSystemFont, sans-serif;
-  background: linear-gradient(135deg,#0f2027,#203a43,#2c5364);
-  color:white;
-  text-align:center;
+  font-family:-apple-system,BlinkMacSystemFont,sans-serif;
+  background:var(--bg);
+  color:var(--text);
+  transition:0.4s;
+  animation:fadeIn 1s ease;
 }
 
-header{
-  padding:20px;
+@keyframes fadeIn{
+  from{opacity:0; transform:translateY(20px);}
+  to{opacity:1; transform:translateY(0);}
 }
 
+/* Navbar */
+nav{
+  display:flex;
+  justify-content:space-between;
+  padding:15px 30px;
+  backdrop-filter:blur(15px);
+  background:rgba(255,255,255,0.1);
+  position:sticky;
+  top:0;
+}
+
+nav h2{
+  margin:0;
+}
+
+.toggle{
+  cursor:pointer;
+}
+
+/* Search */
 .search-box{
+  display:block;
+  margin:20px auto;
   width:80%;
   max-width:400px;
   padding:12px;
   border-radius:30px;
   border:none;
   outline:none;
-  background:rgba(255,255,255,0.2);
+  background:var(--card);
   backdrop-filter:blur(10px);
-  color:white;
+  color:var(--text);
 }
 
+/* Cards */
 .container{
   display:flex;
   flex-wrap:wrap;
@@ -38,17 +75,17 @@ header{
 }
 
 .card{
-  width:260px;
-  padding:20px;
+  width:250px;
+  padding:15px;
   border-radius:20px;
-  background:rgba(255,255,255,0.1);
+  background:var(--card);
   backdrop-filter:blur(20px);
-  box-shadow:0 8px 32px rgba(0,0,0,0.3);
-  transition:0.4s;
+  transition:0.3s;
+  cursor:pointer;
 }
 
 .card:hover{
-  transform:translateY(-10px) scale(1.03);
+  transform:translateY(-8px) scale(1.03);
 }
 
 .card img{
@@ -56,36 +93,59 @@ header{
   border-radius:15px;
 }
 
-.buttons{
-  margin-top:30px;
-  display:flex;
+/* Modal */
+.modal{
+  position:fixed;
+  top:0; left:0;
+  width:100%;
+  height:100%;
+  background:rgba(0,0,0,0.7);
+  display:none;
   justify-content:center;
-  gap:15px;
-  flex-wrap:wrap;
+  align-items:center;
+}
+
+.modal-content{
+  background:white;
+  color:black;
+  padding:30px;
+  border-radius:20px;
+  width:90%;
+  max-width:500px;
+}
+
+.modal img{
+  width:100%;
+  border-radius:15px;
+}
+
+/* Contact Buttons */
+.buttons{
+  text-align:center;
+  margin:30px;
 }
 
 .btn{
-  padding:12px 20px;
+  padding:10px 20px;
   border-radius:30px;
   text-decoration:none;
-  color:white;
-  background:rgba(255,255,255,0.2);
+  margin:5px;
+  background:var(--card);
+  color:var(--text);
   backdrop-filter:blur(10px);
-  transition:0.3s;
 }
 
-.btn:hover{
-  background:rgba(255,255,255,0.4);
-}
-
-.back-btn{
+/* Floating WhatsApp */
+.whatsapp{
   position:fixed;
-  top:20px;
-  left:20px;
-  background:rgba(255,255,255,0.2);
-  padding:10px 15px;
-  border-radius:20px;
-  cursor:pointer;
+  bottom:20px;
+  right:20px;
+  background:#25D366;
+  color:white;
+  padding:15px;
+  border-radius:50%;
+  font-size:22px;
+  text-decoration:none;
 }
 </style>
 
@@ -110,70 +170,91 @@ let allProducts = [];
 
 window.onload = () => {
   const container = document.getElementById("products");
-  const searchInput = document.getElementById("search");
+  const search = document.getElementById("search");
 
   const productsRef = ref(db, "products");
 
-  onValue(productsRef, (snapshot) => {
-    container.innerHTML = "";
-    allProducts = [];
-
-    if (!snapshot.exists()) {
-      container.innerHTML = "No Products Found";
+  onValue(productsRef, (snapshot)=>{
+    container.innerHTML="";
+    allProducts=[];
+    if(!snapshot.exists()){
+      container.innerHTML="No Products";
       return;
     }
-
-    const data = snapshot.val();
-
-    for (let key in data) {
+    const data=snapshot.val();
+    for(let key in data){
       allProducts.push(data[key]);
     }
-
-    displayProducts(allProducts);
+    display(allProducts);
   });
 
-  searchInput.addEventListener("input", () => {
-    const value = searchInput.value.toLowerCase();
-    const filtered = allProducts.filter(p =>
-      p.name.toLowerCase().includes(value)
-    );
-    displayProducts(filtered);
+  search.addEventListener("input",()=>{
+    const value=search.value.toLowerCase();
+    const filtered=allProducts.filter(p=>p.name.toLowerCase().includes(value));
+    display(filtered);
   });
 };
 
-function displayProducts(products){
-  const container = document.getElementById("products");
-  container.innerHTML = "";
-
-  products.forEach(product => {
-    container.innerHTML += `
-      <div class="card">
+function display(products){
+  const container=document.getElementById("products");
+  container.innerHTML="";
+  products.forEach(product=>{
+    container.innerHTML+=`
+      <div class="card" onclick='openModal(${JSON.stringify(product)})'>
         <img src="${product.image}">
         <h3>${product.name}</h3>
         <p>${product.category}</p>
-        <p>${product.description}</p>
       </div>
     `;
   });
+}
+
+window.openModal=function(product){
+  document.getElementById("modal").style.display="flex";
+  document.getElementById("modal-body").innerHTML=`
+    <img src="${product.image}">
+    <h2>${product.name}</h2>
+    <p><b>Category:</b> ${product.category}</p>
+    <p>${product.description}</p>
+  `;
+}
+
+window.closeModal=function(){
+  document.getElementById("modal").style.display="none";
+}
+
+window.toggleMode=function(){
+  document.body.classList.toggle("light");
 }
 </script>
 </head>
 
 <body>
 
-<div class="back-btn" onclick="history.back()">⬅ Back</div>
+<nav>
+  <h2>NN Pharma</h2>
+  <div>
+    <span class="toggle" onclick="toggleMode()">🌙 / ☀</span>
+  </div>
+</nav>
 
-<header>
-<h1>NN Pharma</h1>
-<input type="text" id="search" class="search-box" placeholder="Search product...">
-</header>
+<input type="text" id="search" class="search-box" placeholder="Search products...">
 
 <div class="container" id="products"></div>
 
 <div class="buttons">
   <a class="btn" href="tel:9044568592">📞 Call</a>
   <a class="btn" href="mailto:soulhealthcare97@gmail.com">📧 Email</a>
-  <a class="btn" href="https://wa.me/919044568592" target="_blank">🟢 WhatsApp</a>
+</div>
+
+<a href="https://wa.me/919044568592" class="whatsapp" target="_blank">🟢</a>
+
+<!-- Modal -->
+<div class="modal" id="modal" onclick="closeModal()">
+  <div class="modal-content" onclick="event.stopPropagation()">
+    <div id="modal-body"></div>
+    <button onclick="closeModal()">Close</button>
+  </div>
 </div>
 
 </body>
