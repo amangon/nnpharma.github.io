@@ -5,16 +5,13 @@
 <title>NN Pharma</title>
 
 <style>
-
-/* ===== Animated Apple Gradient Background ===== */
 body{
   margin:0;
   font-family:-apple-system,BlinkMacSystemFont,sans-serif;
+  background:linear-gradient(-45deg,#0f2027,#203a43,#2c5364,#1c92d2);
+  background-size:400% 400%;
+  animation:gradientMove 12s ease infinite;
   color:white;
-  overflow-x:hidden;
-  background: linear-gradient(-45deg,#0f2027,#203a43,#2c5364,#1c92d2);
-  background-size: 400% 400%;
-  animation: gradientMove 12s ease infinite;
 }
 
 @keyframes gradientMove{
@@ -23,75 +20,86 @@ body{
   100%{background-position:0% 50%;}
 }
 
-/* Navbar */
-nav{
-  display:flex;
-  justify-content:space-between;
-  padding:18px 40px;
-  backdrop-filter:blur(20px);
-  background:rgba(255,255,255,0.1);
-  position:sticky;
-  top:0;
-  z-index:100;
+/* Header */
+.header{
+  text-align:center;
+  padding:30px;
 }
 
-/* Search */
+.header img{
+  width:140px;
+  margin-bottom:10px;
+}
+
+/* Search + Filter */
+.search-container{
+  text-align:center;
+  margin:20px;
+}
+
 .search{
-  display:block;
-  margin:30px auto;
-  width:85%;
-  max-width:450px;
-  padding:14px 20px;
+  padding:12px 20px;
   border-radius:30px;
   border:none;
   outline:none;
+  width:70%;
+  max-width:400px;
   background:rgba(255,255,255,0.2);
-  backdrop-filter:blur(15px);
   color:white;
-  font-size:15px;
 }
 
-/* Grid */
+.filter-btn{
+  padding:10px 15px;
+  border-radius:20px;
+  border:none;
+  margin-left:10px;
+  background:rgba(255,255,255,0.2);
+  color:white;
+  cursor:pointer;
+}
+
+/* Section */
+.section{
+  padding:20px;
+}
+
+.section h2{
+  text-align:center;
+  margin-bottom:20px;
+}
+
 .container{
   display:flex;
   flex-wrap:wrap;
   justify-content:center;
-  gap:30px;
-  padding:20px;
+  gap:25px;
 }
 
 .card{
-  width:260px;
-  border-radius:25px;
-  background:rgba(255,255,255,0.1);
-  backdrop-filter:blur(25px);
+  width:240px;
+  border-radius:20px;
   padding:15px;
+  background:rgba(255,255,255,0.1);
+  backdrop-filter:blur(20px);
+  transition:0.3s;
   cursor:pointer;
-  transition:0.4s;
 }
 
 .card:hover{
-  transform:translateY(-12px) scale(1.05);
+  transform:translateY(-8px) scale(1.05);
 }
 
-/* ===== Product Image Zoom Effect ===== */
 .card img{
   width:100%;
-  border-radius:20px;
-  transition:0.4s;
-}
-
-.card:hover img{
-  transform:scale(1.1);
+  border-radius:15px;
 }
 
 /* Modal */
 .modal{
   position:fixed;
-  top:0; left:0;
-  width:100%; height:100%;
+  top:0;left:0;
+  width:100%;height:100%;
   background:rgba(0,0,0,0.7);
-  backdrop-filter:blur(10px);
   display:none;
   justify-content:center;
   align-items:center;
@@ -100,74 +108,38 @@ nav{
 .modal-content{
   background:white;
   color:black;
+  padding:30px;
+  border-radius:25px;
   width:90%;
   max-width:600px;
-  padding:30px;
-  border-radius:30px;
   position:relative;
-  animation:zoom 0.3s ease;
 }
 
-@keyframes zoom{
-  from{transform:scale(0.8);}
-  to{transform:scale(1);}
-}
-
-/* ===== Zoom Effect Inside Modal ===== */
 .modal img{
   width:100%;
-  border-radius:20px;
-  transition:0.4s;
-}
-
-.modal img:hover{
-  transform:scale(1.2);
+  border-radius:15px;
 }
 
 .close{
   position:absolute;
   top:15px;
   right:20px;
-  font-size:26px;
+  font-size:25px;
   cursor:pointer;
-  color:black;
 }
 
-/* Contact Buttons */
-.contact{
-  text-align:center;
-  margin:40px;
-}
-
-.btn{
-  padding:12px 25px;
-  border-radius:30px;
-  margin:5px;
-  text-decoration:none;
-  color:white;
-  background:rgba(255,255,255,0.2);
-  backdrop-filter:blur(10px);
-}
-
-/* Floating WhatsApp */
+/* WhatsApp */
 .whatsapp{
   position:fixed;
   bottom:20px;
   right:20px;
   background:#25D366;
   color:white;
-  padding:18px;
+  padding:15px;
   border-radius:50%;
-  font-size:22px;
   text-decoration:none;
-  box-shadow:0 5px 15px rgba(0,0,0,0.3);
-  transition:0.3s;
+  font-size:22px;
 }
-
-.whatsapp:hover{
-  transform:scale(1.1);
-}
-
 </style>
 
 <script type="module">
@@ -190,42 +162,50 @@ const db = getDatabase(app);
 let allProducts=[];
 
 window.onload=()=>{
-  const container=document.getElementById("products");
+  const impContainer=document.getElementById("important");
+  const normalContainer=document.getElementById("normal");
   const search=document.getElementById("search");
-  const productsRef=ref(db,"products");
 
-  onValue(productsRef,(snapshot)=>{
-    container.innerHTML="";
+  onValue(ref(db,"products"),(snapshot)=>{
+    impContainer.innerHTML="";
+    normalContainer.innerHTML="";
     allProducts=[];
-    if(!snapshot.exists()){
-      container.innerHTML="No Products";
-      return;
-    }
+    if(!snapshot.exists()) return;
+
     const data=snapshot.val();
     for(let key in data){
       allProducts.push(data[key]);
     }
-    display(allProducts);
+    render(allProducts);
   });
 
   search.addEventListener("input",()=>{
     const value=search.value.toLowerCase();
     const filtered=allProducts.filter(p=>p.name.toLowerCase().includes(value));
-    display(filtered);
+    render(filtered);
   });
 };
 
-function display(products){
-  const container=document.getElementById("products");
-  container.innerHTML="";
+function render(products){
+  const impContainer=document.getElementById("important");
+  const normalContainer=document.getElementById("normal");
+  impContainer.innerHTML="";
+  normalContainer.innerHTML="";
+
   products.forEach(product=>{
-    container.innerHTML+=`
+    const card=`
       <div class="card" onclick='openProduct(${JSON.stringify(product)})'>
         <img src="${product.image}">
         <h3>${product.name}</h3>
         <p>${product.category}</p>
       </div>
     `;
+
+    if(product.category.toLowerCase().includes("important")){
+      impContainer.innerHTML+=card;
+    } else{
+      normalContainer.innerHTML+=card;
+    }
   });
 }
 
@@ -235,7 +215,6 @@ window.openProduct=function(product){
     <span class="close" onclick="closeModal()">✕</span>
     <img src="${product.image}">
     <h2>${product.name}</h2>
-    <p><b>Category:</b> ${product.category}</p>
     <p>${product.description}</p>
   `;
 }
@@ -248,17 +227,23 @@ window.closeModal=function(){
 
 <body>
 
-<nav>
-  <h2>NN Pharma</h2>
-</nav>
+<div class="header">
+  <img src="logo.png">
+  <h1>NN Pharma</h1>
+</div>
 
-<input type="text" id="search" class="search" placeholder="Search products...">
+<div class="search-container">
+  <input type="text" id="search" class="search" placeholder="Search product...">
+</div>
 
-<div class="container" id="products"></div>
+<div class="section">
+  <h2>⭐ Important Products</h2>
+  <div class="container" id="important"></div>
+</div>
 
-<div class="contact">
-  <a class="btn" href="tel:9044568592">📞 Call</a>
-  <a class="btn" href="mailto:soulhealthcare97@gmail.com">📧 Email</a>
+<div class="section">
+  <h2>All Products</h2>
+  <div class="container" id="normal"></div>
 </div>
 
 <a href="https://wa.me/919044568592" class="whatsapp" target="_blank">🟢</a>
