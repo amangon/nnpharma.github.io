@@ -155,19 +155,81 @@ section{padding:40px 20px;display:flex;justify-content:center;}
 </section>
 
 <!-- POPUP -->
-<div class="popup" id="popup">
+<div class="popup" id="popup" onclick="closeOutside(event)">
   <div class="popup-content">
 
-    <div class="close" onclick="closePopup()" 
+    <!-- Close Button -->
+    <div onclick="closePopup()" 
          style="text-align:right; font-size:22px; cursor:pointer;">✖</div>
 
-    <div style="text-align:center; margin-bottom:25px;">
+    <!-- Product Image -->
+    <div style="text-align:center; margin-bottom:20px;">
       <img src="product1.jpeg" 
-           style="width:260px;
+           style="width:240px;
                   border-radius:20px;
-                  box-shadow:0 15px 35px rgba(0,0,0,0.5);
-                  transition:0.4s ease;">
+                  box-shadow:0 15px 35px rgba(0,0,0,0.5);">
     </div>
+
+    <h2 style="margin-bottom:10px;">Axcept-SP Tablets</h2>
+
+    <p><strong>Composition:</strong><br>
+    Aceclofenac 100 mg + Paracetamol 325 mg + Serratiopeptidase 15 mg</p>
+
+    <p><strong>Indications:</strong><br>
+    Post-operative pain, dental pain, joint pain & inflammation.</p>
+
+    <p><strong>Advantages:</strong><br>
+    ✔ Fast pain relief<br>
+    ✔ Reduces swelling<br>
+    ✔ Supports faster recovery</p>
+
+    <p><strong>Dosage:</strong><br>
+    As directed by physician.</p>
+
+    <!-- Contact Buttons -->
+    <div style="margin-top:25px; text-align:center;">
+
+      <a href="tel:+919044568592">
+        <button style="padding:10px 20px;
+                       border-radius:30px;
+                       border:none;
+                       margin:5px;
+                       background:#28a745;
+                       color:white;
+                       cursor:pointer;">
+          📞 Call
+        </button>
+      </a>
+
+      <a href="mailto:soulhealthcare97@gmail.com">
+        <button style="padding:10px 20px;
+                       border-radius:30px;
+                       border:none;
+                       margin:5px;
+                       background:#ffffff;
+                       color:#111;
+                       cursor:pointer;">
+          📧 Email
+        </button>
+      </a>
+
+      <a href="https://wa.me/919044568592" target="_blank">
+        <button style="padding:10px 20px;
+                       border-radius:30px;
+                       border:none;
+                       margin:5px;
+                       background:#25D366;
+                       color:white;
+                       cursor:pointer;">
+          💬 WhatsApp
+        </button>
+      </a>
+
+    </div>
+
+  </div>
+</div>
+
 
     <h2 style="margin-bottom:15px;">Axcept-SP Tablets</h2>
 
