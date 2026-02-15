@@ -69,7 +69,8 @@ window.login = async function() {
   try {
     await signInWithEmailAndPassword(auth, emailInput, passwordInput);
     alert("Login Successful ✅");
-    window.location.href = "admin.html";
+    window.location.href = "/nnpharma.github.io/admin.html";
+
   } catch (error) {
     alert(error.code);
     console.log(error);
