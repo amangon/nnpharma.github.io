@@ -54,28 +54,30 @@ import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/fir
 const firebaseConfig = {
   apiKey: "AIzaSyAKCKgHWREXMm76SzUptK1w2tLR-6V5J1k",
   authDomain: "nnpharma-new.firebaseapp.com",
-  databaseURL: "https://nnpharma-new-default-rtdb.firebaseio.com",
-  projectId: "nnpharma-new",
-  storageBucket: "nnpharma-new.firebasestorage.app",
-  messagingSenderId: "509788618449",
-  appId: "1:509788618449:web:c784004cc179ac89408ff0"
+  projectId: "nnpharma-new"
 };
 
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 
-window.login = async ()=>{
-  const email = email.value;
-  const password = password.value;
+// LOGIN FUNCTION
+window.login = async function() {
 
-  try{
-    await signInWithEmailAndPassword(auth,email,password);
-    window.location.href="admin.html";
-  }catch(e){
-    alert("Login Failed");
+  const emailInput = document.getElementById("email").value;
+  const passwordInput = document.getElementById("password").value;
+
+  try {
+    await signInWithEmailAndPassword(auth, emailInput, passwordInput);
+    alert("Login Successful ✅");
+    window.location.href = "admin.html";
+  } catch (error) {
+    alert(error.code);
+    console.log(error);
   }
-}
+
+};
 </script>
+
 
 </body>
 </html>
