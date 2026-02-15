@@ -1,34 +1,104 @@
 <!DOCTYPE html>
 <html>
 <head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>NN Pharma</title>
+
 <style>
-body{margin:0;padding:30px;background:linear-gradient(135deg,#0f2027,#203a43,#2c5364);color:white;font-family:sans-serif;}
+body{
+  margin:0;
+  font-family:'Segoe UI',sans-serif;
+  background:linear-gradient(135deg,#141e30,#243b55);
+  color:white;
+  padding:30px;
+}
+
 h1{text-align:center;}
-.tabs{text-align:center;margin-bottom:20px;}
-.tabs button{margin:5px;padding:10px 20px;border:none;border-radius:30px;background:#00c6ff;color:white;}
-.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:20px;}
-.card{background:rgba(255,255,255,0.1);padding:15px;border-radius:20px;backdrop-filter:blur(20px);cursor:pointer;}
-.card img{width:100%;border-radius:15px;}
-#modal{position:fixed;top:0;left:0;width:100%;height:100%;display:none;justify-content:center;align-items:center;background:rgba(0,0,0,0.7);}
-.modal-content{background:rgba(255,255,255,0.1);padding:30px;border-radius:25px;max-width:400px;backdrop-filter:blur(30px);}
+
+.search{
+  text-align:center;
+  margin-bottom:20px;
+}
+
+input{
+  padding:10px;
+  width:300px;
+  border:none;
+  border-radius:20px;
+}
+
+.tabs{
+  text-align:center;
+  margin-bottom:20px;
+}
+
+.tabs button{
+  margin:5px;
+  padding:8px 15px;
+  border:none;
+  border-radius:20px;
+  background:#00c6ff;
+  color:white;
+  cursor:pointer;
+}
+
+.grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
+  gap:20px;
+}
+
+.card{
+  background:rgba(255,255,255,0.1);
+  padding:15px;
+  border-radius:15px;
+  cursor:pointer;
+}
+
+.card img{
+  width:100%;
+  border-radius:10px;
+}
+
+#modal{
+  position:fixed;
+  top:0;
+  left:0;
+  width:100%;
+  height:100%;
+  display:none;
+  justify-content:center;
+  align-items:center;
+  background:rgba(0,0,0,0.7);
+}
+
+.modal-content{
+  background:rgba(255,255,255,0.1);
+  padding:30px;
+  border-radius:20px;
+}
 </style>
 </head>
 <body>
 
 <h1>NN PHARMA</h1>
 
+<div class="search">
+<input type="text" id="search" placeholder="Search medicine">
+</div>
+
 <div class="tabs">
 <button onclick="filter('All')">All</button>
 <button onclick="filter('Tablet')">Tablet</button>
 <button onclick="filter('Injection')">Injection</button>
 <button onclick="filter('Syrup')">Syrup</button>
-<button onclick="filter('Capsule')">Capsule</button>
 </div>
 
 <div class="grid" id="products"></div>
 
-<div id="modal"><div class="modal-content" id="modalContent"></div></div>
+<div id="modal">
+<div class="modal-content" id="modalContent"></div>
+</div>
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-app.js";
@@ -46,9 +116,9 @@ const db = getDatabase(app);
 
 let allProducts=[];
 
-onValue(ref(db,"products"),snap=>{
-  if(!snap.exists()) return;
-  allProducts=Object.values(snap.val());
+onValue(ref(db,"products"),(snapshot)=>{
+  if(!snapshot.exists()) return;
+  allProducts = Object.values(snapshot.val());
   display(allProducts);
 });
 
@@ -56,10 +126,10 @@ function display(products){
   productsDiv.innerHTML="";
   products.forEach(p=>{
     productsDiv.innerHTML+=`
-      <div class="card" onclick="showProduct('${p.image}','${p.name}')">
+      <div class="card" onclick="showProduct('${p.image}','${p.name}','${p.description}')">
         <img src="${p.image}">
         <h4>${p.name}</h4>
-        <small>${p.category}</small>
+        <p>${p.category}</p>
       </div>
     `;
   });
@@ -70,14 +140,20 @@ window.filter=(cat)=>{
   else display(allProducts.filter(p=>p.category===cat));
 }
 
-window.showProduct=(img,name)=>{
+window.showProduct=(img,name,desc)=>{
   modal.style.display="flex";
   modalContent.innerHTML=`
-    <img src="${img}" style="width:100%;border-radius:15px;">
+    <img src="${img}" style="width:100%;border-radius:10px;">
     <h2>${name}</h2>
+    <p>${desc}</p>
     <button onclick="modal.style.display='none'">Close</button>
   `;
 }
+
+document.getElementById("search").addEventListener("input",(e)=>{
+  const value = e.target.value.toLowerCase();
+  display(allProducts.filter(p=>p.name.toLowerCase().includes(value)));
+});
 </script>
 
 </body>
