@@ -94,14 +94,21 @@ input{
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-app.js";
-import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-database.js";
+import { getDatabase } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-database.js";
 
 const firebaseConfig = {
-  apiKey: "YOUR_API_KEY",
+  apiKey: "AIzaSyAKCKgHWREXMm76SzUptK1w2tLR-6V5J1k",
   authDomain: "nnpharma-new.firebaseapp.com",
   databaseURL: "https://nnpharma-new-default-rtdb.firebaseio.com",
-  projectId: "nnpharma-new"
+  projectId: "nnpharma-new",
+  storageBucket: "nnpharma-new.firebasestorage.app",
+  messagingSenderId: "509788618449",
+  appId: "1:509788618449:web:c784004cc179ac89408ff0"
 };
+
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+</script>
 
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
