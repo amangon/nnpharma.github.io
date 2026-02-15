@@ -1,93 +1,80 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>NN Pharma Admin</title>
+<title>Admin Login</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <style>
-body{margin:0;background:linear-gradient(135deg,#0f2027,#203a43,#2c5364);font-family:sans-serif;color:white;padding:30px;}
-.glass{background:rgba(255,255,255,0.1);padding:30px;border-radius:20px;margin-bottom:20px;backdrop-filter:blur(20px);}
-input,select{width:100%;padding:12px;margin:10px 0;border:none;border-radius:10px;}
-button{padding:10px 20px;border:none;border-radius:30px;background:#00c6ff;color:white;}
-.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:15px;}
-.card{background:rgba(255,255,255,0.08);padding:15px;border-radius:15px;}
-.card img{width:100%;border-radius:10px;}
+body{
+  margin:0;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  height:100vh;
+  background:linear-gradient(135deg,#0f2027,#203a43,#2c5364);
+  font-family:sans-serif;
+}
+.card{
+  background:rgba(255,255,255,0.1);
+  padding:40px;
+  border-radius:20px;
+  backdrop-filter:blur(25px);
+  color:white;
+  width:300px;
+}
+input{
+  width:100%;
+  padding:12px;
+  margin:10px 0;
+  border:none;
+  border-radius:10px;
+}
+button{
+  width:100%;
+  padding:12px;
+  border:none;
+  border-radius:30px;
+  background:#00c6ff;
+  color:white;
+  font-weight:bold;
+  cursor:pointer;
+}
 </style>
 </head>
 <body>
 
-<h2>NN Pharma Admin</h2>
-
-<div class="glass">
-<input id="name" placeholder="Product Name">
-<select id="category">
-<option>Tablet</option>
-<option>Injection</option>
-<option>Syrup</option>
-<option>Capsule</option>
-<option>Antibiotic</option>
-</select>
-<input type="file" id="imageFile">
-<button onclick="addProduct()">Add Product</button>
+<div class="card">
+<h2>Admin Login</h2>
+<input id="email" placeholder="Email">
+<input id="password" type="password" placeholder="Password">
+<button id="loginBtn">Login</button>
 </div>
-
-<div class="grid" id="products"></div>
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-app.js";
-import { getDatabase, ref, push, onValue } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-database.js";
-import { getStorage, ref as sRef, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-storage.js";
-import { getAuth,onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-auth.js";
+import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-auth.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyAKCKgHWREXMm76SzUptK1w2tLR-6V5J1k",
   authDomain: "nnpharma-new.firebaseapp.com",
-  databaseURL: "https://nnpharma-new-default-rtdb.firebaseio.com",
-  projectId: "nnpharma-new",
-  storageBucket: "nnpharma-new.firebasestorage.app",
-  messagingSenderId: "509788618449",
-  appId: "1:509788618449:web:c784004cc179ac89408ff0"
+  projectId: "nnpharma-new"
 };
 
 const app = initializeApp(firebaseConfig);
-const db = getDatabase(app);
-const storage = getStorage(app);
 const auth = getAuth(app);
 
-onAuthStateChanged(auth,user=>{
-  if(!user) window.location.href="login.html";
-});
+document.getElementById("loginBtn").addEventListener("click", async () => {
 
-window.addProduct = async ()=>{
-  const name = name.value;
-  const category = category.value;
-  const file = imageFile.files[0];
-  if(!file){ alert("Select Image"); return;}
+  const emailValue = document.getElementById("email").value;
+  const passwordValue = document.getElementById("password").value;
 
-  const storageRef = sRef(storage,"products/"+file.name);
-  await uploadBytes(storageRef,file);
-  const url = await getDownloadURL(storageRef);
-
-  await push(ref(db,"products"),{
-    name,category,image:url
-  });
-
-  alert("Added Successfully");
-}
-
-const productsDiv = document.getElementById("products");
-
-onValue(ref(db,"products"),snap=>{
-  productsDiv.innerHTML="";
-  if(!snap.exists()) return;
-  const data=snap.val();
-  for(let key in data){
-    productsDiv.innerHTML+=`
-      <div class="card">
-        <img src="${data[key].image}">
-        <h4>${data[key].name}</h4>
-        <small>${data[key].category}</small>
-      </div>
-    `;
+  try {
+    await signInWithEmailAndPassword(auth, emailValue, passwordValue);
+    alert("Login Successful ✅");
+    window.location.href = "admin.html";
+  } catch (error) {
+    alert("Error: " + error.message);
   }
+
 });
 </script>
 
