@@ -1,50 +1,116 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>Admin Login</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NN Pharma Admin Login</title>
+
 <style>
 body{
   margin:0;
+  height:100vh;
   display:flex;
   justify-content:center;
   align-items:center;
-  height:100vh;
+  font-family:'Segoe UI',sans-serif;
   background:linear-gradient(135deg,#0f2027,#203a43,#2c5364);
-  font-family:sans-serif;
+  overflow:hidden;
 }
+
+/* Floating background animation */
+body::before{
+  content:"";
+  position:absolute;
+  width:600px;
+  height:600px;
+  background:radial-gradient(circle,#00e5ff,transparent);
+  top:-200px;
+  left:-200px;
+  animation:float 6s infinite alternate;
+  opacity:0.3;
+}
+
+@keyframes float{
+  from{transform:translateY(0);}
+  to{transform:translateY(100px);}
+}
+
 .card{
-  background:rgba(255,255,255,0.1);
+  position:relative;
+  width:350px;
   padding:40px;
-  border-radius:20px;
+  background:rgba(255,255,255,0.1);
   backdrop-filter:blur(25px);
+  border-radius:25px;
   color:white;
-  width:300px;
+  box-shadow:0 20px 60px rgba(0,0,0,0.6);
+  animation:fadeIn 1s ease;
 }
+
+@keyframes fadeIn{
+  from{opacity:0; transform:translateY(40px);}
+  to{opacity:1; transform:translateY(0);}
+}
+
+h2{
+  text-align:center;
+  margin-bottom:30px;
+  letter-spacing:1px;
+}
+
 input{
   width:100%;
   padding:12px;
   margin:10px 0;
   border:none;
-  border-radius:10px;
+  border-radius:12px;
+  background:rgba(255,255,255,0.2);
+  color:white;
+  font-size:14px;
 }
+
+input::placeholder{
+  color:#ddd;
+}
+
 button{
   width:100%;
   padding:12px;
+  margin-top:15px;
   border:none;
   border-radius:30px;
-  background:#00c6ff;
+  background:linear-gradient(45deg,#00e5ff,#2979ff);
   color:white;
   font-weight:bold;
+  font-size:15px;
+  cursor:pointer;
+  transition:0.3s;
+}
+
+button:hover{
+  transform:translateY(-3px);
+  box-shadow:0 10px 30px rgba(0,0,0,0.5);
+}
+
+.logo{
+  text-align:center;
+  font-size:28px;
+  font-weight:bold;
+  margin-bottom:10px;
+  letter-spacing:2px;
 }
 </style>
 </head>
+
 <body>
 
 <div class="card">
-<h2>Admin Login</h2>
-<input id="email" placeholder="Email">
-<input id="password" type="password" placeholder="Password">
-<button onclick="login()">Login</button>
+<div class="logo">NN PHARMA</div>
+<h2>Admin Panel Login</h2>
+
+<input type="email" id="email" placeholder="Enter Email">
+<input type="password" id="password" placeholder="Enter Password">
+
+<button id="loginBtn">Login</button>
 </div>
 
 <script type="module">
@@ -60,15 +126,21 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 
-// LOGIN FUNCTION
-window.login = async function() {
+document.getElementById("loginBtn").addEventListener("click", async () => {
 
   const emailInput = document.getElementById("email").value;
   const passwordInput = document.getElementById("password").value;
 
+  if(!emailInput || !passwordInput){
+    alert("Fill all fields");
+    return;
+  }
+
   try {
     await signInWithEmailAndPassword(auth, emailInput, passwordInput);
     alert("Login Successful ✅");
+
+    // GitHub Pages correct redirect
     window.location.href = "/nnpharma.github.io/admin.html";
 
   } catch (error) {
@@ -76,9 +148,8 @@ window.login = async function() {
     console.log(error);
   }
 
-};
+});
 </script>
-
 
 </body>
 </html>
