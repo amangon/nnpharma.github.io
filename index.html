@@ -1,135 +1,62 @@
 <!DOCTYPE html>
 <html>
 <head>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>NN Pharma</title>
-
 <style>
-body{
-  margin:0;
-  font-family:sans-serif;
-  background:linear-gradient(135deg,#0f2027,#203a43,#2c5364);
-  color:white;
-  padding:30px;
-  text-align:center;
-}
-
-#logo{
-  font-size:32px;
-  cursor:pointer;
-  margin-bottom:20px;
-}
-
-input{
-  padding:12px;
-  width:300px;
-  border:none;
-  border-radius:30px;
-  margin-bottom:30px;
-}
-
-.grid{
-  display:grid;
-  grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
-  gap:20px;
-}
-
-.card{
-  background:rgba(255,255,255,0.1);
-  backdrop-filter:blur(20px);
-  padding:15px;
-  border-radius:20px;
-  cursor:pointer;
-  transition:0.3s;
-}
-.card:hover{
-  transform:scale(1.05);
-}
-
-.card img{
-  width:100%;
-  height:150px;
-  object-fit:cover;
-  border-radius:15px;
-}
-
-/* Modal */
-#modal{
-  position:fixed;
-  top:0;
-  left:0;
-  width:100%;
-  height:100%;
-  display:none;
-  justify-content:center;
-  align-items:center;
-  background:rgba(0,0,0,0.7);
-}
-
-.modal-content{
-  background:rgba(255,255,255,0.1);
-  backdrop-filter:blur(30px);
-  padding:30px;
-  border-radius:25px;
-  max-width:400px;
-}
-.modal-content img{
-  width:100%;
-  border-radius:15px;
-}
+body{margin:0;padding:30px;background:linear-gradient(135deg,#0f2027,#203a43,#2c5364);color:white;font-family:sans-serif;}
+h1{text-align:center;}
+.tabs{text-align:center;margin-bottom:20px;}
+.tabs button{margin:5px;padding:10px 20px;border:none;border-radius:30px;background:#00c6ff;color:white;}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:20px;}
+.card{background:rgba(255,255,255,0.1);padding:15px;border-radius:20px;backdrop-filter:blur(20px);cursor:pointer;}
+.card img{width:100%;border-radius:15px;}
+#modal{position:fixed;top:0;left:0;width:100%;height:100%;display:none;justify-content:center;align-items:center;background:rgba(0,0,0,0.7);}
+.modal-content{background:rgba(255,255,255,0.1);padding:30px;border-radius:25px;max-width:400px;backdrop-filter:blur(30px);}
 </style>
 </head>
-
 <body>
 
-<h1 id="logo">NN PHARMA</h1>
+<h1>NN PHARMA</h1>
 
-<input type="text" id="search" placeholder="Search medicine...">
+<div class="tabs">
+<button onclick="filter('All')">All</button>
+<button onclick="filter('Tablet')">Tablet</button>
+<button onclick="filter('Injection')">Injection</button>
+<button onclick="filter('Syrup')">Syrup</button>
+<button onclick="filter('Capsule')">Capsule</button>
+</div>
 
 <div class="grid" id="products"></div>
 
-<div id="modal">
-  <div class="modal-content" id="modalContent"></div>
-</div>
+<div id="modal"><div class="modal-content" id="modalContent"></div></div>
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-app.js";
-import { getDatabase } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-database.js";
+import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-database.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyAKCKgHWREXMm76SzUptK1w2tLR-6V5J1k",
   authDomain: "nnpharma-new.firebaseapp.com",
   databaseURL: "https://nnpharma-new-default-rtdb.firebaseio.com",
-  projectId: "nnpharma-new",
-  storageBucket: "nnpharma-new.firebasestorage.app",
-  messagingSenderId: "509788618449",
-  appId: "1:509788618449:web:c784004cc179ac89408ff0"
+  projectId: "nnpharma-new"
 };
 
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
-</script>
 
-const app = initializeApp(firebaseConfig);
-const db = getDatabase(app);
-const productsRef = ref(db, "products");
+let allProducts=[];
 
-const productsDiv = document.getElementById("products");
-const searchInput = document.getElementById("search");
-
-let allProducts = [];
-
-onValue(productsRef,(snap)=>{
+onValue(ref(db,"products"),snap=>{
   if(!snap.exists()) return;
-  allProducts = Object.values(snap.val());
-  displayProducts(allProducts);
+  allProducts=Object.values(snap.val());
+  display(allProducts);
 });
 
-function displayProducts(products){
+function display(products){
   productsDiv.innerHTML="";
   products.forEach(p=>{
-    productsDiv.innerHTML += `
-      <div class="card" onclick="showProduct('${p.image}','${p.name}','${p.description}')">
+    productsDiv.innerHTML+=`
+      <div class="card" onclick="showProduct('${p.image}','${p.name}')">
         <img src="${p.image}">
         <h4>${p.name}</h4>
         <small>${p.category}</small>
@@ -138,27 +65,19 @@ function displayProducts(products){
   });
 }
 
-searchInput.addEventListener("input",()=>{
-  const value = searchInput.value.toLowerCase();
-  const filtered = allProducts.filter(p =>
-    p.name.toLowerCase().includes(value)
-  );
-  displayProducts(filtered);
-});
+window.filter=(cat)=>{
+  if(cat==="All") display(allProducts);
+  else display(allProducts.filter(p=>p.category===cat));
+}
 
-window.showProduct = (img,name,desc)=>{
-  document.getElementById("modal").style.display="flex";
-  document.getElementById("modalContent").innerHTML=`
-    <img src="${img}">
+window.showProduct=(img,name)=>{
+  modal.style.display="flex";
+  modalContent.innerHTML=`
+    <img src="${img}" style="width:100%;border-radius:15px;">
     <h2>${name}</h2>
-    <p>${desc}</p>
-    <button onclick="closeModal()">Close</button>
+    <button onclick="modal.style.display='none'">Close</button>
   `;
-};
-
-window.closeModal = ()=>{
-  document.getElementById("modal").style.display="none";
-};
+}
 </script>
 
 </body>
