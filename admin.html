@@ -1,57 +1,58 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>Admin Login</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NN Pharma Admin</title>
+
 <style>
 body{
   margin:0;
+  font-family:'Segoe UI',sans-serif;
+  background:linear-gradient(135deg,#141e30,#243b55);
+  color:white;
+  padding:30px;
+}
+
+.header{
   display:flex;
-  justify-content:center;
+  justify-content:space-between;
   align-items:center;
-  height:100vh;
-  background:linear-gradient(135deg,#0f2027,#203a43,#2c5364);
-  font-family:sans-serif;
 }
-.card{
-  background:rgba(255,255,255,0.1);
-  padding:40px;
-  border-radius:20px;
-  backdrop-filter:blur(25px);
-  color:white;
-  width:300px;
-}
-input{
-  width:100%;
-  padding:12px;
-  margin:10px 0;
-  border:none;
-  border-radius:10px;
-}
+
 button{
-  width:100%;
-  padding:12px;
+  padding:8px 15px;
   border:none;
-  border-radius:30px;
-  background:#00c6ff;
+  border-radius:20px;
+  background:#ff4d4d;
   color:white;
-  font-weight:bold;
   cursor:pointer;
+}
+
+.box{
+  margin-top:40px;
+  padding:30px;
+  background:rgba(255,255,255,0.08);
+  border-radius:20px;
+  backdrop-filter:blur(20px);
 }
 </style>
 </head>
+
 <body>
 
-<div class="card">
-<h2>Admin Login</h2>
-<input id="email" placeholder="Email">
-<input id="password" type="password" placeholder="Password">
-<button id="loginBtn">Login</button>
+<div class="header">
+<h2>Admin Dashboard</h2>
+<button id="logoutBtn">Logout</button>
+</div>
+
+<div class="box">
+<h3>Welcome to NN Pharma Admin Panel</h3>
+<p>You are successfully logged in.</p>
 </div>
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-app.js";
-import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-auth.js";
+import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-auth.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyAKCKgHWREXMm76SzUptK1w2tLR-6V5J1k",
@@ -62,19 +63,17 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 
-document.getElementById("loginBtn").addEventListener("click", async () => {
-
-  const emailValue = document.getElementById("email").value;
-  const passwordValue = document.getElementById("password").value;
-
-  try {
-    await signInWithEmailAndPassword(auth, emailValue, passwordValue);
-    alert("Login Successful ✅");
-    window.location.href = "admin.html";
-  } catch (error) {
-    alert("Error: " + error.message);
+// Check login
+onAuthStateChanged(auth, (user) => {
+  if (!user) {
+    window.location.href = "login.html";
   }
+});
 
+// Logout
+document.getElementById("logoutBtn").addEventListener("click", async () => {
+  await signOut(auth);
+  window.location.href = "login.html";
 });
 </script>
 
