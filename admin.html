@@ -1,120 +1,41 @@
 <!DOCTYPE html>
 <html>
 <head>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>NN Pharma Admin</title>
-
 <style>
-body{
-  margin:0;
-  font-family:'Segoe UI',sans-serif;
-  background:linear-gradient(135deg,#0f2027,#203a43,#2c5364);
-  color:white;
-}
-
-/* Toast */
-.toast{
-  position:fixed;
-  top:-100px;
-  left:50%;
-  transform:translateX(-50%);
-  background:linear-gradient(45deg,#00e5ff,#2979ff);
-  padding:15px 30px;
-  border-radius:40px;
-  font-weight:bold;
-  transition:0.5s;
-  box-shadow:0 10px 40px rgba(0,0,0,0.5);
-}
-.toast.show{
-  top:30px;
-}
-
-.container{
-  max-width:900px;
-  margin:auto;
-  padding:30px;
-}
-
-.glass{
-  background:rgba(255,255,255,0.1);
-  backdrop-filter:blur(25px);
-  padding:30px;
-  border-radius:25px;
-  margin-bottom:30px;
-}
-
-input, select, textarea{
-  width:100%;
-  padding:12px;
-  margin:10px 0;
-  border:none;
-  border-radius:12px;
-  background:rgba(255,255,255,0.2);
-  color:white;
-}
-
-button{
-  padding:12px 25px;
-  border:none;
-  border-radius:30px;
-  cursor:pointer;
-  background:linear-gradient(45deg,#00e5ff,#2979ff);
-  color:white;
-  font-weight:bold;
-}
-
-.product{
-  background:rgba(255,255,255,0.08);
-  padding:15px;
-  border-radius:15px;
-  margin-bottom:15px;
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-}
+body{margin:0;background:linear-gradient(135deg,#0f2027,#203a43,#2c5364);font-family:sans-serif;color:white;padding:30px;}
+.glass{background:rgba(255,255,255,0.1);padding:30px;border-radius:20px;margin-bottom:20px;backdrop-filter:blur(20px);}
+input,select{width:100%;padding:12px;margin:10px 0;border:none;border-radius:10px;}
+button{padding:10px 20px;border:none;border-radius:30px;background:#00c6ff;color:white;}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:15px;}
+.card{background:rgba(255,255,255,0.08);padding:15px;border-radius:15px;}
+.card img{width:100%;border-radius:10px;}
 </style>
 </head>
-
 <body>
 
-<div class="toast" id="toast">Product Added Successfully ✅</div>
-
-<div class="container">
-
-<h2 style="text-align:center;">NN Pharma Admin Panel</h2>
+<h2>NN Pharma Admin</h2>
 
 <div class="glass">
-<h3>Add Product</h3>
-
 <input id="name" placeholder="Product Name">
-
 <select id="category">
-<option value="">Select Category</option>
 <option>Tablet</option>
 <option>Injection</option>
 <option>Syrup</option>
 <option>Capsule</option>
 <option>Antibiotic</option>
-<option>Ointment</option>
-<option>Drop</option>
 </select>
-
-<input id="image" placeholder="Image URL">
-<textarea id="description" placeholder="Description"></textarea>
-
-<button id="addBtn">Add Product</button>
+<input type="file" id="imageFile">
+<button onclick="addProduct()">Add Product</button>
 </div>
 
-<div class="glass">
-<h3>All Products</h3>
-<div id="list"></div>
-</div>
-
-</div>
+<div class="grid" id="products"></div>
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-app.js";
-import { getDatabase } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-database.js";
+import { getDatabase, ref, push, onValue } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-database.js";
+import { getStorage, ref as sRef, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-storage.js";
+import { getAuth,onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-auth.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyAKCKgHWREXMm76SzUptK1w2tLR-6V5J1k",
@@ -128,63 +49,46 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
-</script>
+const storage = getStorage(app);
+const auth = getAuth(app);
 
-
-const app = initializeApp(firebaseConfig);
-const db = getDatabase(app);
-const productsRef = ref(db, "products");
-
-const toast = document.getElementById("toast");
-
-function showToast(){
-  toast.classList.add("show");
-  setTimeout(()=> toast.classList.remove("show"),3000);
-}
-
-document.getElementById("addBtn").addEventListener("click", async ()=>{
-  const name = document.getElementById("name").value;
-  const category = document.getElementById("category").value;
-  const image = document.getElementById("image").value;
-  const description = document.getElementById("description").value;
-
-  if(!name || !category || !image || !description){
-    alert("Fill all fields");
-    return;
-  }
-
-  await push(productsRef,{ name, category, image, description });
-  showToast();
-
-  document.getElementById("name").value="";
-  document.getElementById("image").value="";
-  document.getElementById("description").value="";
-  document.getElementById("category").value="";
+onAuthStateChanged(auth,user=>{
+  if(!user) window.location.href="login.html";
 });
 
-const list = document.getElementById("list");
+window.addProduct = async ()=>{
+  const name = name.value;
+  const category = category.value;
+  const file = imageFile.files[0];
+  if(!file){ alert("Select Image"); return;}
 
-onValue(productsRef,(snap)=>{
-  list.innerHTML="";
+  const storageRef = sRef(storage,"products/"+file.name);
+  await uploadBytes(storageRef,file);
+  const url = await getDownloadURL(storageRef);
+
+  await push(ref(db,"products"),{
+    name,category,image:url
+  });
+
+  alert("Added Successfully");
+}
+
+const productsDiv = document.getElementById("products");
+
+onValue(ref(db,"products"),snap=>{
+  productsDiv.innerHTML="";
   if(!snap.exists()) return;
-
-  const data = snap.val();
+  const data=snap.val();
   for(let key in data){
-    list.innerHTML += `
-      <div class="product">
-        <div>
-          <strong>${data[key].name}</strong><br>
-          <small>${data[key].category}</small>
-        </div>
-        <button onclick="deleteProduct('${key}')">Delete</button>
+    productsDiv.innerHTML+=`
+      <div class="card">
+        <img src="${data[key].image}">
+        <h4>${data[key].name}</h4>
+        <small>${data[key].category}</small>
       </div>
     `;
   }
 });
-
-window.deleteProduct = (key)=>{
-  remove(ref(db,"products/"+key));
-};
 </script>
 
 </body>
