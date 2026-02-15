@@ -19,62 +19,173 @@ body{
   align-items:center;
 }
 
-button{
-  padding:8px 15px;
-  border:none;
-  border-radius:20px;
+.logout{
   background:#ff4d4d;
+  border:none;
+  padding:8px 15px;
+  border-radius:20px;
   color:white;
   cursor:pointer;
 }
 
-.box{
-  margin-top:40px;
-  padding:30px;
-  background:rgba(255,255,255,0.08);
+.glass{
+  margin-top:30px;
+  padding:25px;
   border-radius:20px;
+  background:rgba(255,255,255,0.08);
   backdrop-filter:blur(20px);
+}
+
+input, select{
+  width:100%;
+  padding:10px;
+  margin:8px 0;
+  border:none;
+  border-radius:10px;
+}
+
+button{
+  padding:10px 20px;
+  border:none;
+  border-radius:25px;
+  background:#00c6ff;
+  color:white;
+  cursor:pointer;
+}
+
+.grid{
+  margin-top:20px;
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
+  gap:20px;
+}
+
+.card{
+  background:rgba(255,255,255,0.1);
+  padding:15px;
+  border-radius:15px;
+}
+
+.card img{
+  width:100%;
+  border-radius:10px;
+}
+
+.delete{
+  background:#ff4d4d;
+  margin-top:10px;
 }
 </style>
 </head>
-
 <body>
 
 <div class="header">
 <h2>Admin Dashboard</h2>
-<button id="logoutBtn">Logout</button>
+<button class="logout" id="logoutBtn">Logout</button>
 </div>
 
-<div class="box">
-<h3>Welcome to NN Pharma Admin Panel</h3>
-<p>You are successfully logged in.</p>
+<div class="glass">
+<h3>Add Product</h3>
+
+<input id="name" placeholder="Product Name">
+
+<select id="category">
+<option>Tablet</option>
+<option>Injection</option>
+<option>Syrup</option>
+<option>Capsule</option>
+<option>Antibiotic</option>
+</select>
+
+<input type="file" id="imageFile">
+
+<input id="description" placeholder="Description">
+
+<button id="addBtn">Add Product</button>
 </div>
+
+<div class="grid" id="productList"></div>
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-app.js";
 import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-auth.js";
+import { getDatabase, ref, push, onValue, remove } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-database.js";
+import { getStorage, ref as sRef, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-storage.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyAKCKgHWREXMm76SzUptK1w2tLR-6V5J1k",
   authDomain: "nnpharma-new.firebaseapp.com",
-  projectId: "nnpharma-new"
+  databaseURL: "https://nnpharma-new-default-rtdb.firebaseio.com",
+  projectId: "nnpharma-new",
+  storageBucket: "nnpharma-new.firebasestorage.app"
 };
 
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
+const db = getDatabase(app);
+const storage = getStorage(app);
 
-// Check login
-onAuthStateChanged(auth, (user) => {
-  if (!user) {
-    window.location.href = "login.html";
+// Auth check
+onAuthStateChanged(auth,(user)=>{
+  if(!user){
+    window.location.href="login.html";
   }
 });
 
 // Logout
-document.getElementById("logoutBtn").addEventListener("click", async () => {
+document.getElementById("logoutBtn").addEventListener("click", async ()=>{
   await signOut(auth);
-  window.location.href = "login.html";
+  window.location.href="login.html";
 });
+
+// Add product
+document.getElementById("addBtn").addEventListener("click", async ()=>{
+
+  const name = document.getElementById("name").value;
+  const category = document.getElementById("category").value;
+  const file = document.getElementById("imageFile").files[0];
+  const description = document.getElementById("description").value;
+
+  if(!name || !file || !description){
+    alert("Fill all fields");
+    return;
+  }
+
+  const storageRef = sRef(storage,"products/"+file.name);
+  await uploadBytes(storageRef,file);
+  const url = await getDownloadURL(storageRef);
+
+  await push(ref(db,"products"),{
+    name, category, image:url, description
+  });
+
+  alert("Product Added Successfully ✅");
+});
+
+// Load products
+const productList = document.getElementById("productList");
+
+onValue(ref(db,"products"),(snapshot)=>{
+  productList.innerHTML="";
+  if(!snapshot.exists()) return;
+
+  const data = snapshot.val();
+
+  for(let key in data){
+    productList.innerHTML+=`
+      <div class="card">
+        <img src="${data[key].image}">
+        <h4>${data[key].name}</h4>
+        <p>${data[key].category}</p>
+        <button class="delete" onclick="deleteProduct('${key}')">Delete</button>
+      </div>
+    `;
+  }
+});
+
+window.deleteProduct = function(key){
+  remove(ref(db,"products/"+key));
+};
 </script>
 
 </body>
