@@ -5,54 +5,54 @@
 <title>NN Pharma</title>
 
 <style>
+*{margin:0;padding:0;box-sizing:border-box;}
+
 body{
-  margin:0;
-  font-family:'Segoe UI',sans-serif;
-  background:linear-gradient(135deg,#141e30,#243b55);
+  font-family:sans-serif;
+  background:#0f172a;
   color:white;
-  padding:30px;
 }
 
-h1{text-align:center;}
+/* NAVBAR */
+.nav{
+  display:flex;
+  justify-content:space-between;
+  padding:20px;
+  background:#020617;
+}
 
-.search{
-  text-align:center;
-  margin-bottom:20px;
+.logo{color:#38bdf8;font-size:22px;}
+
+/* SEARCH */
+.search-box{
+  padding:20px;
 }
 
 input{
-  padding:10px;
-  width:300px;
+  width:100%;
+  padding:12px;
+  border-radius:10px;
   border:none;
-  border-radius:20px;
 }
 
-.tabs{
-  text-align:center;
-  margin-bottom:20px;
-}
-
-.tabs button{
-  margin:5px;
-  padding:8px 15px;
-  border:none;
-  border-radius:20px;
-  background:#00c6ff;
-  color:white;
-  cursor:pointer;
-}
-
+/* GRID */
 .grid{
   display:grid;
-  grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
+  grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
   gap:20px;
+  padding:20px;
 }
 
+/* CARD */
 .card{
-  background:rgba(255,255,255,0.1);
-  padding:15px;
+  background:#020617;
   border-radius:15px;
-  cursor:pointer;
+  padding:15px;
+  transition:0.3s;
+}
+
+.card:hover{
+  transform:scale(1.05);
 }
 
 .card img{
@@ -60,99 +60,65 @@ input{
   border-radius:10px;
 }
 
-#modal{
-  position:fixed;
-  top:0;
-  left:0;
-  width:100%;
-  height:100%;
-  display:none;
-  justify-content:center;
-  align-items:center;
-  background:rgba(0,0,0,0.7);
-}
-
-.modal-content{
-  background:rgba(255,255,255,0.1);
-  padding:30px;
-  border-radius:20px;
+.category{
+  color:#38bdf8;
 }
 </style>
 </head>
+
 <body>
 
-<h1>NN PHARMA</h1>
-
-<div class="search">
-<input type="text" id="search" placeholder="Search medicine">
+<div class="nav">
+<div class="logo">NN Pharma</div>
 </div>
 
-<div class="tabs">
-<button onclick="filter('All')">All</button>
-<button onclick="filter('Tablet')">Tablet</button>
-<button onclick="filter('Injection')">Injection</button>
-<button onclick="filter('Syrup')">Syrup</button>
+<div class="search-box">
+<input id="search" placeholder="Search medicine...">
 </div>
 
 <div class="grid" id="products"></div>
-
-<div id="modal">
-<div class="modal-content" id="modalContent"></div>
-</div>
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-app.js";
 import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-database.js";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyAKCKgHWREXMm76SzUptK1w2tLR-6V5J1k",
-  authDomain: "nnpharma-new.firebaseapp.com",
-  databaseURL: "https://nnpharma-new-default-rtdb.firebaseio.com",
-  projectId: "nnpharma-new"
+  apiKey: "YOUR_KEY",
+  authDomain: "YOUR_DOMAIN",
+  databaseURL: "YOUR_DB",
+  projectId: "YOUR_ID",
+  storageBucket: "YOUR_BUCKET"
 };
 
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 
-let allProducts=[];
+const container = document.getElementById("products");
 
-onValue(ref(db,"products"),(snapshot)=>{
-  if(!snapshot.exists()) return;
-  allProducts = Object.values(snapshot.val());
-  display(allProducts);
-});
+onValue(ref(db,"products"),(snap)=>{
+  container.innerHTML="";
+  const data = snap.val();
 
-function display(products){
-  productsDiv.innerHTML="";
-  products.forEach(p=>{
-    productsDiv.innerHTML+=`
-      <div class="card" onclick="showProduct('${p.image}','${p.name}','${p.description}')">
-        <img src="${p.image}">
-        <h4>${p.name}</h4>
-        <p>${p.category}</p>
+  for(let key in data){
+    container.innerHTML+=`
+      <div class="card">
+        <img src="${data[key].image}">
+        <h3>${data[key].name}</h3>
+        <p class="category">${data[key].category}</p>
+        <p>${data[key].description}</p>
       </div>
     `;
-  });
-}
+  }
+});
 
-window.filter=(cat)=>{
-  if(cat==="All") display(allProducts);
-  else display(allProducts.filter(p=>p.category===cat));
-}
-
-window.showProduct=(img,name,desc)=>{
-  modal.style.display="flex";
-  modalContent.innerHTML=`
-    <img src="${img}" style="width:100%;border-radius:10px;">
-    <h2>${name}</h2>
-    <p>${desc}</p>
-    <button onclick="modal.style.display='none'">Close</button>
-  `;
-}
-
+// SEARCH
 document.getElementById("search").addEventListener("input",(e)=>{
   const value = e.target.value.toLowerCase();
-  display(allProducts.filter(p=>p.name.toLowerCase().includes(value)));
+  const cards = document.querySelectorAll(".card");
+
+  cards.forEach(card=>{
+    card.style.display = card.innerText.toLowerCase().includes(value) ? "block":"none";
+  });
 });
 </script>
 
