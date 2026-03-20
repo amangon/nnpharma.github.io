@@ -5,86 +5,118 @@
 <title>NN Pharma Admin</title>
 
 <style>
+*{margin:0;padding:0;box-sizing:border-box;}
+
 body{
-  margin:0;
   font-family:'Segoe UI',sans-serif;
-  background:linear-gradient(135deg,#141e30,#243b55);
-  color:white;
-  padding:30px;
+  background:#0f172a;
+  color:#fff;
 }
 
+/* HEADER */
 .header{
   display:flex;
   justify-content:space-between;
   align-items:center;
+  padding:20px 30px;
+  background:#020617;
+  border-bottom:1px solid rgba(255,255,255,0.1);
+}
+
+.header h2{
+  color:#38bdf8;
 }
 
 .logout{
-  background:#ff4d4d;
+  background:#ef4444;
   border:none;
-  padding:8px 15px;
+  padding:8px 18px;
   border-radius:20px;
   color:white;
   cursor:pointer;
 }
 
-.glass{
-  margin-top:30px;
-  padding:25px;
-  border-radius:20px;
-  background:rgba(255,255,255,0.08);
-  backdrop-filter:blur(20px);
+/* MAIN */
+.container{
+  padding:30px;
 }
 
+/* CARD */
+.card-box{
+  background:#020617;
+  padding:25px;
+  border-radius:20px;
+  margin-bottom:30px;
+  border:1px solid rgba(255,255,255,0.05);
+}
+
+/* INPUT */
 input, select{
   width:100%;
-  padding:10px;
-  margin:8px 0;
+  padding:12px;
+  margin:10px 0;
   border:none;
   border-radius:10px;
+  background:#0f172a;
+  color:white;
 }
 
 button{
-  padding:10px 20px;
+  padding:12px;
   border:none;
   border-radius:25px;
-  background:#00c6ff;
+  background:#38bdf8;
   color:white;
   cursor:pointer;
+  width:100%;
+  margin-top:10px;
 }
 
+/* PRODUCT GRID */
 .grid{
-  margin-top:20px;
   display:grid;
-  grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
+  grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
   gap:20px;
 }
 
-.card{
-  background:rgba(255,255,255,0.1);
+.product{
+  background:#020617;
   padding:15px;
   border-radius:15px;
+  transition:0.3s;
+  border:1px solid rgba(255,255,255,0.05);
 }
 
-.card img{
+.product:hover{
+  transform:scale(1.03);
+}
+
+.product img{
   width:100%;
   border-radius:10px;
 }
 
+.product h4{
+  margin-top:10px;
+}
+
 .delete{
-  background:#ff4d4d;
+  background:#ef4444;
   margin-top:10px;
 }
 </style>
 </head>
+
 <body>
 
 <div class="header">
-<h2>Admin Dashboard</h2>
+<h2>NN Pharma Admin</h2>
 <button class="logout" id="logoutBtn">Logout</button>
 </div>
 
-<div class="glass">
+<div class="container">
+
+<div class="card-box">
 <h3>Add Product</h3>
 
 <input id="name" placeholder="Product Name">
@@ -106,87 +138,7 @@ button{
 
 <div class="grid" id="productList"></div>
 
-<script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-app.js";
-import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-auth.js";
-import { getDatabase, ref, push, onValue, remove } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-database.js";
-import { getStorage, ref as sRef, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-storage.js";
-
-const firebaseConfig = {
-  apiKey: "AIzaSyAKCKgHWREXMm76SzUptK1w2tLR-6V5J1k",
-  authDomain: "nnpharma-new.firebaseapp.com",
-  databaseURL: "https://nnpharma-new-default-rtdb.firebaseio.com",
-  projectId: "nnpharma-new",
-  storageBucket: "nnpharma-new.firebasestorage.app"
-};
-
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
-const db = getDatabase(app);
-const storage = getStorage(app);
-
-// Auth check
-onAuthStateChanged(auth,(user)=>{
-  if(!user){
-    window.location.href="login.html";
-  }
-});
-
-// Logout
-document.getElementById("logoutBtn").addEventListener("click", async ()=>{
-  await signOut(auth);
-  window.location.href="login.html";
-});
-
-// Add product
-document.getElementById("addBtn").addEventListener("click", async ()=>{
-
-  const name = document.getElementById("name").value;
-  const category = document.getElementById("category").value;
-  const file = document.getElementById("imageFile").files[0];
-  const description = document.getElementById("description").value;
-
-  if(!name || !file || !description){
-    alert("Fill all fields");
-    return;
-  }
-
-  const storageRef = sRef(storage,"products/"+file.name);
-  await uploadBytes(storageRef,file);
-  const url = await getDownloadURL(storageRef);
-
-  await push(ref(db,"products"),{
-    name, category, image:url, description
-  });
-
-  alert("Product Added Successfully ✅");
-});
-
-// Load products
-const productList = document.getElementById("productList");
-
-onValue(ref(db,"products"),(snapshot)=>{
-  productList.innerHTML="";
-  if(!snapshot.exists()) return;
-
-  const data = snapshot.val();
-
-  for(let key in data){
-    productList.innerHTML+=`
-      <div class="card">
-        <img src="${data[key].image}">
-        <h4>${data[key].name}</h4>
-        <p>${data[key].category}</p>
-        <button class="delete" onclick="deleteProduct('${key}')">Delete</button>
-      </div>
-    `;
-  }
-});
-
-window.deleteProduct = function(key){
-  remove(ref(db,"products/"+key));
-};
-</script>
+</div>
 
 </body>
 </html>
