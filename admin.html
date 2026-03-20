@@ -8,23 +8,17 @@
 *{margin:0;padding:0;box-sizing:border-box;}
 
 body{
-  font-family:'Segoe UI',sans-serif;
+  font-family:sans-serif;
   background:#0f172a;
-  color:#fff;
+  color:white;
 }
 
 /* HEADER */
 .header{
   display:flex;
   justify-content:space-between;
-  align-items:center;
-  padding:20px 30px;
+  padding:20px;
   background:#020617;
-  border-bottom:1px solid rgba(255,255,255,0.1);
-}
-
-.header h2{
-  color:#38bdf8;
 }
 
 .logout{
@@ -36,21 +30,19 @@ body{
   cursor:pointer;
 }
 
-/* MAIN */
+/* CONTAINER */
 .container{
-  padding:30px;
+  padding:20px;
 }
 
-/* CARD */
-.card-box{
+/* FORM */
+.form{
   background:#020617;
-  padding:25px;
-  border-radius:20px;
-  margin-bottom:30px;
-  border:1px solid rgba(255,255,255,0.05);
+  padding:20px;
+  border-radius:15px;
+  margin-bottom:20px;
 }
 
-/* INPUT */
 input, select{
   width:100%;
   padding:12px;
@@ -68,36 +60,24 @@ button{
   background:#38bdf8;
   color:white;
   cursor:pointer;
-  width:100%;
-  margin-top:10px;
 }
 
-/* PRODUCT GRID */
+/* GRID */
 .grid{
   display:grid;
   grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
   gap:20px;
 }
 
-.product{
+.card{
   background:#020617;
   padding:15px;
   border-radius:15px;
-  transition:0.3s;
-  border:1px solid rgba(255,255,255,0.05);
 }
 
-.product:hover{
-  transform:scale(1.03);
-}
-
-.product img{
+.card img{
   width:100%;
   border-radius:10px;
-}
-
-.product h4{
-  margin-top:10px;
 }
 
 .delete{
@@ -111,14 +91,12 @@ button{
 
 <div class="header">
 <h2>NN Pharma Admin</h2>
-<button class="logout" id="logoutBtn">Logout</button>
+<button id="logoutBtn" class="logout">Logout</button>
 </div>
 
 <div class="container">
 
-<div class="card-box">
-<h3>Add Product</h3>
-
+<div class="form">
 <input id="name" placeholder="Product Name">
 
 <select id="category">
@@ -126,10 +104,11 @@ button{
 <option>Injection</option>
 <option>Syrup</option>
 <option>Capsule</option>
-<option>Antibiotic</option>
 </select>
 
 <input type="file" id="imageFile">
+
+<img id="preview" style="width:100px;display:none;border-radius:10px;">
 
 <input id="description" placeholder="Description">
 
@@ -139,6 +118,99 @@ button{
 <div class="grid" id="productList"></div>
 
 </div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-app.js";
+import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-auth.js";
+import { getDatabase, ref, push, onValue, remove } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-database.js";
+import { getStorage, ref as sRef, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-storage.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyAKCKgHWREXMm76SzUptK1w2tLR-6V5J1k",
+  authDomain: "nnpharma-new.firebaseapp.com",
+  databaseURL: "https://nnpharma-new-default-rtdb.firebaseio.com",
+  projectId: "nnpharma-new",
+  storageBucket: "nnpharma-new.firebasestorage.app"
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getDatabase(app);
+const storage = getStorage(app);
+
+// AUTH
+onAuthStateChanged(auth,(user)=>{
+  if(!user){
+    window.location.href="login.html";
+  }
+});
+
+// LOGOUT
+logoutBtn.onclick = async ()=>{
+  await signOut(auth);
+  window.location.href="login.html";
+};
+
+// IMAGE PREVIEW
+imageFile.onchange = (e)=>{
+  const file = e.target.files[0];
+  if(file){
+    preview.src = URL.createObjectURL(file);
+    preview.style.display = "block";
+  }
+};
+
+// ADD PRODUCT
+addBtn.onclick = async ()=>{
+
+  const name = nameInput.value;
+  const category = category.value;
+  const file = imageFile.files[0];
+  const description = description.value;
+
+  if(!name || !file || !description){
+    alert("Fill all fields");
+    return;
+  }
+
+  addBtn.innerText = "Uploading...";
+
+  const storageRef = sRef(storage,"products/"+file.name);
+  await uploadBytes(storageRef,file);
+  const url = await getDownloadURL(storageRef);
+
+  await push(ref(db,"products"),{
+    name, category, image:url, description
+  });
+
+  addBtn.innerText = "Add Product";
+  alert("Added ✅");
+};
+
+// LOAD PRODUCTS
+onValue(ref(db,"products"),(snap)=>{
+  productList.innerHTML="";
+  const data = snap.val();
+
+  for(let key in data){
+    productList.innerHTML+=`
+      <div class="card">
+        <img src="${data[key].image}">
+        <h4>${data[key].name}</h4>
+        <p>${data[key].category}</p>
+        <button class="delete" onclick="deleteProduct('${key}')">Delete</button>
+      </div>
+    `;
+  }
+});
+
+// DELETE
+window.deleteProduct = (key)=>{
+  if(confirm("Delete product?")){
+    remove(ref(db,"products/"+key));
+  }
+};
+</script>
 
 </body>
 </html>
